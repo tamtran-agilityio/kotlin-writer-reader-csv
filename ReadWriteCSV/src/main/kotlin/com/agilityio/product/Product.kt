@@ -1,4 +1,4 @@
-package agilityio.product
+package com.agilityio.product
 
 data class Product(
     val id: Long,
