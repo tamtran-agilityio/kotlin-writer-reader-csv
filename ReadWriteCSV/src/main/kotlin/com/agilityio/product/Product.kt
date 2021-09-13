@@ -1,5 +1,8 @@
 package com.agilityio.product
 
+/**
+ * Data class product
+ */
 data class Product(
     val id: Long,
     val price: Double,
