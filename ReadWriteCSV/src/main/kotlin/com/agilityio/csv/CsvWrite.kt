@@ -10,6 +10,7 @@ import java.io.IOException
  * Implement csv write file
  */
 class CsvWrite<V>(private val headers: List<String>, private val values: List<V>)  {
+    private val delimitersNewLine: String = "\n"
 
     /**
      * Implement build header of csv file
@@ -17,7 +18,7 @@ class CsvWrite<V>(private val headers: List<String>, private val values: List<V>
      * @return string builder of headers
      */
     private fun buildHeader(headers: List<String>): StringBuilder {
-        return StringBuilder().append(headers.joinToString()).append("\n")
+        return StringBuilder().append(headers.joinToString()).append(delimitersNewLine)
     }
 
     /**
@@ -29,7 +30,7 @@ class CsvWrite<V>(private val headers: List<String>, private val values: List<V>
         val formatObject = FormatObject<V>()
         val valueString = formatObject.toString(value)
 
-        return StringBuilder().append(valueString).append("\n")
+        return StringBuilder().append(valueString).append(delimitersNewLine)
     }
 
     /**
@@ -72,9 +73,11 @@ class CsvWrite<V>(private val headers: List<String>, private val values: List<V>
 }
 
 fun main() {
+    val headers: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
     val products = mutableListOf<Product>()
     products.add(
-        Product(1,
+        Product(
+            1,
             21.0,
             "Phone",
             "Box",
@@ -103,7 +106,6 @@ fun main() {
             20.0
         )
     )
-    val headers: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
-    CsvWrite<Product>(headers, products).createCsvFile("products.csv")
 
+    CsvWrite<Product>(headers, products).createCsvFile("products.csv")
 }

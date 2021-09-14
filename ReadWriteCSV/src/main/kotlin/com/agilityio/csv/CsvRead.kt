@@ -10,67 +10,34 @@ import java.io.IOException
  * Implement read csv file
  * @param fileName file name of csv file
  */
-class CsvRead(private val fileName: String) {
+class CsvRead<V>(val fileName: String): CsvInterface<V> {
+    override var values: MutableList<V> = mutableListOf()
+    override var headers: List<String> = listOf()
+
     /**
      * Implement read csv file
      */
-    fun read() {
+    override fun get() {
         var fileReader: BufferedReader? = null
-        var fieldHelpers = FieldHelpers()
 
         try {
-            val products = mutableListOf<Product>()
             var line: String?
-
             fileReader = BufferedReader(FileReader(fileName))
 
             // Read CSV header
-            val headers = fileReader.readLine()
+            headers = fileReader.readLine().split(", ")
 
             // Read the file line by line starting from the second line
             line = fileReader.readLine()
+
             while (line != null) {
                 val fields = line.split(", ")
                 if (fields.isNotEmpty()) {
-                    val product = Product(
-                        fieldHelpers.convertStringTo<Long>(fields[0]),
-                        fieldHelpers.convertStringTo<Double>(fields[1]),
-                        fieldHelpers.convertStringTo<String>(fields[2]),
-                        fieldHelpers.convertStringTo<String>(fields[3]),
-                        fieldHelpers.convertStringTo<String>(fields[4]),
-                        fieldHelpers.convertStringTo<String>(fields[5]),
-                        fieldHelpers.convertStringTo<String>(fields[6]),
-                        fieldHelpers.convertStringTo<Double>(fields[7]),
-                        fieldHelpers.convertStringTo<Double>(fields[8]),
-                        fieldHelpers.convertStringTo<String>(fields[9]),
-                        fieldHelpers.convertStringTo<Int>(fields[10]),
-                        fieldHelpers.convertStringTo<String>(fields[11]),
-                        fieldHelpers.convertStringTo<Long>(fields[12]),
-                        fieldHelpers.convertStringTo<String>(fields[13]),
-                        fieldHelpers.convertStringTo<String>(fields[14]),
-                        fieldHelpers.convertStringTo<String>(fields[15]),
-                        fieldHelpers.convertStringTo<String>(fields[16]),
-                        fieldHelpers.convertStringTo<Long>(fields[17]),
-                        fieldHelpers.convertStringTo<String>(fields[18]),
-                        fieldHelpers.convertStringTo<Boolean>(fields[19]),
-                        fieldHelpers.convertStringTo<String>(fields[20]),
-                        fieldHelpers.convertStringTo<Double>(fields[21]),
-                        fieldHelpers.convertStringTo<Double>(fields[22]),
-                        fieldHelpers.convertStringTo<String>(fields[23]),
-                        fieldHelpers.convertStringTo<String>(fields[24]),
-                        fieldHelpers.convertStringTo<String>(fields[25]),
-                        fieldHelpers.convertStringTo<Double>(fields[26])
-                    )
-                    products.add(product)
+                    values.add(fields as V)
                 }
-
                 line = fileReader.readLine()
             }
 
-            // Print the new product list
-            for (product in products) {
-                println(product)
-            }
         } catch (e: Exception) {
             println("Reading CSV Error!")
             e.printStackTrace()
@@ -83,10 +50,4 @@ class CsvRead(private val fileName: String) {
             }
         }
     }
-
-}
-
-fun main() {
-    val csvRead = CsvRead("products.csv")
-    csvRead.read()
 }
