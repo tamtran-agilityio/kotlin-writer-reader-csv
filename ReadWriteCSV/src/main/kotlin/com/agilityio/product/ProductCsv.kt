@@ -5,21 +5,32 @@ import com.agilityio.utils.FieldHelpers
 
 typealias Helpers = FieldHelpers
 
+/**
+ * Implement read product from Csv file
+ */
 class ProductCsv(fileName: String) {
     private var csvRead: CsvRead<List<String>> = CsvRead(fileName)
     private val products: MutableList<Product> = mutableListOf()
 
+    // Initializer blocks prefixed
     init {
         csvRead.get()
     }
 
+    /**
+     * Implement get header of file Csv file
+     * @return list string header of csv file
+     */
     fun getHeader(): List<String> {
         return csvRead.headers
     }
 
+    /**
+     * Implement convert content of table in Csv file to Product
+     * @return list products in Csv file
+     */
     fun getProducts(): MutableList<Product> {
-        val values = csvRead.values
-        values.stream().forEach {
+        csvRead.values.stream().forEach {
             val product = Product(
                 Helpers().convertStringTo<Long>(it[0]),
                 Helpers().convertStringTo<Double>(it[1]),
