@@ -1,5 +1,8 @@
 package com.agilityio.utils
 
+import com.agilityio.csv.CsvField
+import java.lang.reflect.Type
+import kotlin.reflect.KClass
 import kotlin.streams.toList
 
 class FieldHelpers {
@@ -46,4 +49,24 @@ class FieldHelpers {
             else -> throw IllegalStateException("Unknown Generic Type")
         }
     }
-}
+
+    fun convertStringToType(type: KClass<out Any>, value: String?): KClass<out Any> {
+        return when (type) {
+            Int::class -> value?.toInt() as KClass<out Any>
+            String::class -> value as KClass<out Any>
+            Double::class -> value?.toDouble() as KClass<out Any>
+            Boolean::class -> value?.toBoolean() as KClass<out Any>
+            Long::class-> value?.toLong() as KClass<out Any>
+            else -> throw IllegalStateException("Unknown Generic Type")
+        }
+    }
+
+    /**
+     * Handle get field name and type of field in data model
+     */
+    inline fun <reified T> readerFieldForType(): List<CsvField> {
+         return T::class.java!!.declaredFields.map { it ->
+            CsvField(it.name, it.type.kotlin as KClass<out Any>)
+        }
+    }
+ }

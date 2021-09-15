@@ -3,22 +3,24 @@ package com.agilityio.csv
 import com.agilityio.product.Product
 import com.agilityio.utils.FieldHelpers
 import com.agilityio.utils.FormatObject
+import com.agilityio.utils.HeaderUtils
+import com.agilityio.utils.LineUtils
 import java.io.FileWriter
 import java.io.IOException
 
 /**
  * Implement csv write file
  */
-class CsvWrite<V>(private val headers: List<String>, private val values: List<V>)  {
-    private val delimitersNewLine: String = "\n"
+class CsvWrite<V>(private val headers: List<String>)  {
+
 
     /**
      * Implement build header of csv file
-     * @param headers list string of fields
+     * @param header list string of fields
      * @return string builder of headers
      */
-    private fun buildHeader(headers: List<String>): StringBuilder {
-        return StringBuilder().append(headers.joinToString()).append(delimitersNewLine)
+    private fun buildHeader(header: List<String>): StringBuilder {
+        return HeaderUtils().write(header)
     }
 
     /**
@@ -27,10 +29,7 @@ class CsvWrite<V>(private val headers: List<String>, private val values: List<V>
      * @return string builder of line
      */
     private fun buildLine(value: V): StringBuilder {
-        val formatObject = FormatObject<V>()
-        val valueString = formatObject.toString(value)
-
-        return StringBuilder().append(valueString).append(delimitersNewLine)
+        return LineUtils<V>().write(value)
     }
 
     /**
@@ -50,8 +49,8 @@ class CsvWrite<V>(private val headers: List<String>, private val values: List<V>
     /**
      * Implement create csv file with file name
      */
-    fun createCsvFile(nameFile: String) {
-        val file = CsvFile().create(nameFile)
+    fun write(filePath: String, values: List<V>) {
+        val file = CsvFile().create(filePath)
         var fileWriter: FileWriter? = null
         try {
             fileWriter = FileWriter(file)
@@ -107,5 +106,5 @@ fun main() {
         )
     )
 
-    CsvWrite<Product>(headers, products).createCsvFile("products.csv")
+    CsvWrite<Product>(headers).write("products.csv", products)
 }

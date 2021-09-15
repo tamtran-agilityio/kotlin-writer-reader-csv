@@ -4,13 +4,14 @@ import com.agilityio.product.Product
 
 /**
  * Interface of csv
+ * wrapper
  */
-interface CsvInterface<V> {
+interface Csv<T> {
     val headers: List<String>
-    val values: MutableList<V>
+    val values: MutableList<List<Any>>
 
     /**
      * Implement read context on csv file
      */
-    fun get()
+    fun read(filePath: String)
 }
