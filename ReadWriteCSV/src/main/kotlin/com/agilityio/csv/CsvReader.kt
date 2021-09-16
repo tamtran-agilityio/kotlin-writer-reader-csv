@@ -1,34 +1,32 @@
 package com.agilityio.csv
 
-import com.agilityio.product.Helpers
-import com.agilityio.product.Product
 import com.agilityio.utils.FieldHelpers
-import com.agilityio.utils.FormatObject
 import com.agilityio.utils.HeaderUtils
 import com.agilityio.utils.LineUtils
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
-import kotlin.reflect.KClass
 
 /**
  * Implement read csv file
- * @param filePath file name of csv file
  */
-class CsvReader<T>() {
+class CsvReader {
     lateinit var headers: List<String>
     lateinit var columns: List<CsvField>
 
     /**
      * Handle read field name and type of field in data model
+     * @param filePath string path file
+     * @return list T
      */
     inline fun <reified T> read(filePath: String): MutableList<T> {
         columns = FieldHelpers().readerFieldForType<T>()
 
-        var values: MutableList<T> = mutableListOf()
+        val values: MutableList<T> = mutableListOf()
         var fileReader: BufferedReader? = null
-        val gson = Gson()
+        val mapper = jacksonObjectMapper()
 
         try {
             var line: String?
@@ -45,11 +43,10 @@ class CsvReader<T>() {
 
             while (line != null) {
                 if (line.isNotEmpty()) {
-                    val fields = LineUtils<String>().read(line, columns)
-
-                    val stringValue = gson.toJson(fields).toString()
-                    var dataItem = gson.fromJson(stringValue, T::class.java)
-                    values.add(dataItem)
+                    val fields: HashMap<String, Any> = LineUtils<String>().read(line, columns)
+                    val serialized = mapper.writeValueAsString(fields)
+                    val item: T = mapper.readValue(serialized)
+                    values.add(item)
                 }
                 line = fileReader.readLine()
             }

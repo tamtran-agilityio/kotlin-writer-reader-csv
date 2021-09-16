@@ -102,11 +102,37 @@ fun main() {
         "$",
         20.0
     )
-    products.add(
-        product
-
+    val product2 = Product(
+        2,
+        22.0,
+        "Phone",
+        "Box",
+        "K233234",
+        "../image.png",
+        "Image",
+        1.0,
+        210.0,
+        "Box",
+        1,
+        "Box",
+        2423,
+        "Iphone",
+        "Apple mobile",
+        "Test",
+        "Active",
+        2,
+        "Test",
+        true,
+        "Kg",
+        0.1,
+        0.1,
+        "cm",
+        "USD",
+        "$",
+        20.0
     )
-
+    products.add(product)
+    products.add(product2)
 
     CsvWriter<Product>(headers).write("products.csv", products)
 }

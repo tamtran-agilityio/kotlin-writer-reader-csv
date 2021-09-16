@@ -8,7 +8,7 @@ typealias Helpers = FieldHelpers
  * Implement read product from Csv file
  */
 class ProductCsvReader(filePath: String) {
-    private var csvRead: CsvReader<Product> = CsvReader()
+    private var csvRead: CsvReader = CsvReader()
     private var products: MutableList<Product> = mutableListOf()
 
     // Initializer blocks prefixed
