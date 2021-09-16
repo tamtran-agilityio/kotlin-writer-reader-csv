@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 
-internal class CsvWriteTest {
+internal class CsvWriterTest {
 
     @BeforeEach
     fun setUp() {

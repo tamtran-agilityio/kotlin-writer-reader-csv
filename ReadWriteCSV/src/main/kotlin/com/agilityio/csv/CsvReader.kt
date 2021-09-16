@@ -1,10 +1,12 @@
 package com.agilityio.csv
 
 import com.agilityio.product.Helpers
+import com.agilityio.product.Product
 import com.agilityio.utils.FieldHelpers
 import com.agilityio.utils.FormatObject
 import com.agilityio.utils.HeaderUtils
 import com.agilityio.utils.LineUtils
+import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
@@ -14,20 +16,20 @@ import kotlin.reflect.KClass
  * Implement read csv file
  * @param filePath file name of csv file
  */
-class CsvReader<T>() : Csv<T> {
-    override var values: MutableList<List<Any>> = mutableListOf()
-    override var headers: List<String> = listOf()
+class CsvReader<T>() {
+    lateinit var headers: List<String>
     lateinit var columns: List<CsvField>
 
     /**
-     * Handle get field name and type of field in data model
+     * Handle read field name and type of field in data model
      */
-    inline fun <reified T> getFieldAndType() {
+    inline fun <reified T> read(filePath: String): MutableList<T> {
         columns = FieldHelpers().readerFieldForType<T>()
-    }
 
-    override fun read(filePath: String) {
+        var values: MutableList<T> = mutableListOf()
         var fileReader: BufferedReader? = null
+        val gson = Gson()
+
         try {
             var line: String?
             fileReader = BufferedReader(FileReader(filePath))
@@ -41,18 +43,12 @@ class CsvReader<T>() : Csv<T> {
 
             while (line != null) {
                 if (line.isNotEmpty()) {
-                    val fields = LineUtils<String>().read(line)
-                    val lineFormat = columns.mapIndexed { index, csvField ->
-                        when(csvField.type) {
-                            Long::class -> Pair<String, Long>(csvField.name, Helpers().convertStringTo<Long>(fields[index]))
-                            Double::class -> Pair<String, Double>(csvField.name, Helpers().convertStringTo<Double>(fields[index]))
-                            String::class -> Pair<String, String>(csvField.name, Helpers().convertStringTo<String>(fields[index]))
-                            Int::class -> Pair<String, Int>(csvField.name, Helpers().convertStringTo<Int>(fields[index]))
-                            Boolean::class -> Pair<String, Boolean>(csvField.name, Helpers().convertStringTo<Boolean>(fields[index]))
-                            else -> throw IllegalStateException("Unknown Generic Type")
-                        }
-                    }
-                    values.add(lineFormat)
+                    val fields = LineUtils<String>().read(line, columns)
+
+                    val stringValue = gson.toJson(fields).toString()
+                    // FIX ME: Cannot use 'T' as reified type parameter. Use a class instead.
+                    var dataItem = gson.fromJson(stringValue, T::class.java)
+                    values.add(dataItem)
                 }
                 line = fileReader.readLine()
             }
@@ -68,5 +64,7 @@ class CsvReader<T>() : Csv<T> {
                 e.printStackTrace()
             }
         }
+        return values
     }
 }
+

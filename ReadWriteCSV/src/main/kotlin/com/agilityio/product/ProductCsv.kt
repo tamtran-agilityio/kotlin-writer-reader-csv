@@ -2,24 +2,21 @@ package com.agilityio.product
 
 import com.agilityio.csv.CsvReader
 import com.agilityio.utils.FieldHelpers
+import com.google.gson.Gson
+import java.lang.reflect.Constructor
+import kotlin.reflect.KClass
 
 typealias Helpers = FieldHelpers
-
 /**
  * Implement read product from Csv file
  */
-class ProductCsvReader<T>(filePath: String) {
-    // Columns include id, price, ...
-
+class ProductCsvReader(filePath: String) {
     private var csvRead: CsvReader<Product> = CsvReader()
-    private val products: MutableList<Product> = mutableListOf()
+    private var products: MutableList<Product> = mutableListOf()
 
     // Initializer blocks prefixed
     init {
-        csvRead.getFieldAndType<Product>()
-//        println(csvRead.columns)
-        csvRead.read(filePath)
-        println(csvRead.values)
+        products = csvRead.read(filePath)
     }
 
     /**
@@ -35,27 +32,13 @@ class ProductCsvReader<T>(filePath: String) {
      * @return list products in Csv file
      */
     fun getProducts(): MutableList<Product> {
-        csvRead.values.forEach { line ->
-            line.stream().forEach { it ->
-                println(it)
-            }
-
-        // val product = Product()
-        // product.id = readCell(line, "id")
-
-        }
         return products
-    }
-
-
-    fun readCell(line: String, fieldName: String) {
-        // TO DO read cell
     }
 }
 
-
 fun main() {
-    val products = ProductCsvReader<Product>("products.csv")
+    val products = ProductCsvReader("products.csv")
 
-    println(products.getProducts())
+    val listProduct = products.getProducts()
+    println(listProduct)
 }

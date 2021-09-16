@@ -5,6 +5,7 @@ import com.agilityio.utils.FieldHelpers
 import com.agilityio.utils.FormatObject
 import com.agilityio.utils.HeaderUtils
 import com.agilityio.utils.LineUtils
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import java.io.FileWriter
 import java.io.IOException
 
@@ -74,37 +75,40 @@ class CsvWrite<V>(private val headers: List<String>)  {
 fun main() {
     val headers: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
     val products = mutableListOf<Product>()
-    products.add(
-        Product(
-            1,
-            21.0,
-            "Phone",
-            "Box",
-            "K233234",
-            "../image.png",
-            "Image",
-            1.0,
-            210.0,
-            "Box",
-            1,
-            "Box",
-            2423,
-            "Iphone",
-            "Apple mobile",
-            "Test",
-            "Active",
-            2,
-            "Test",
-            true,
-            "Kg",
-            0.1,
-            0.1,
-            "cm",
-            "USD",
-            "$",
-            20.0
-        )
+    val product = Product(
+        1,
+        21.0,
+        "Phone",
+        "Box",
+        "K233234",
+        "../image.png",
+        "Image",
+        1.0,
+        210.0,
+        "Box",
+        1,
+        "Box",
+        2423,
+        "Iphone",
+        "Apple mobile",
+        "Test",
+        "Active",
+        2,
+        "Test",
+        true,
+        "Kg",
+        0.1,
+        0.1,
+        "cm",
+        "USD",
+        "$",
+        20.0
     )
+    products.add(
+        product
+
+    )
+
 
     CsvWrite<Product>(headers).write("products.csv", products)
 }

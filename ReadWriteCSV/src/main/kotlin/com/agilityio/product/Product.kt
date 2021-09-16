@@ -4,7 +4,7 @@ package com.agilityio.product
  * Data class product
  */
 data class Product(
-    val id: Long,
+    var id: Long,
     val price: Double,
     val productName: String,
     val uom: String,
