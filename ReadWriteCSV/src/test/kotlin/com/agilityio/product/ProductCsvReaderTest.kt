@@ -1,4 +1,4 @@
-package com.agilityio.csv
+package com.agilityio.product
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 
-internal class CsvFileTest {
+internal class ProductCsvReaderTest {
 
     @BeforeEach
     fun setUp() {
@@ -17,10 +17,10 @@ internal class CsvFileTest {
     }
 
     @Test
-    fun get() {
+    fun getHeader() {
     }
 
     @Test
-    fun create() {
+    fun getProducts() {
     }
 }

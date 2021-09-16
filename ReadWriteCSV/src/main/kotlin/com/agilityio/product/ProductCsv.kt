@@ -2,9 +2,6 @@ package com.agilityio.product
 
 import com.agilityio.csv.CsvReader
 import com.agilityio.utils.FieldHelpers
-import com.google.gson.Gson
-import java.lang.reflect.Constructor
-import kotlin.reflect.KClass
 
 typealias Helpers = FieldHelpers
 /**
@@ -38,7 +35,8 @@ class ProductCsvReader(filePath: String) {
 
 fun main() {
     val products = ProductCsvReader("products.csv")
-
+    val headers = products.getHeader()
     val listProduct = products.getProducts()
-    println(listProduct)
+    println("headers $headers")
+    println("listProduct $listProduct")
 }

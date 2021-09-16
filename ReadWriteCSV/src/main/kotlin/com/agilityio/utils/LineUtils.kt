@@ -3,13 +3,21 @@ package com.agilityio.utils
 import com.agilityio.csv.CsvField
 import com.agilityio.product.Helpers
 
+/**
+ * Implement helper read write line in Csv file
+ */
 class LineUtils<T> {
     private val delimitersNewLine: String = "\n"
 
+    /**
+     * Implement read line of Csv file
+     * @param line String text when read in Csv file
+     * @param columns list field need read data
+     * @return hashMap key value by type of field
+     */
     fun read(line: String, columns: List<CsvField>): HashMap<String, Any> {
         val fieldMap = HashMap<String, Any>()
         val fields = line.split(", ")
-        // FIX ME: Current user class Instance of type ==> Unresolved reference: type
         columns.forEachIndexed { index, csvField ->
             when (csvField.type) {
                 Long::class ->
@@ -28,9 +36,14 @@ class LineUtils<T> {
         return fieldMap
     }
 
-    fun write(line: T): StringBuilder {
+    /**
+     * Implement builder string from data object
+     * @param data object need convert to string
+     * @return String builder of line
+     */
+    fun write(data: T): StringBuilder {
         val formatObject = FormatObject<T>()
-        val valueString = formatObject.toString(line)
+        val valueString = formatObject.toString(data)
 
         return StringBuilder().append(valueString).append(delimitersNewLine)
     }

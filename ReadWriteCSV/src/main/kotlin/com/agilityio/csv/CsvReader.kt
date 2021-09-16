@@ -35,6 +35,8 @@ class CsvReader<T>() {
             fileReader = BufferedReader(FileReader(filePath))
 
             // Read CSV header
+            // Config reader boolean
+            // Read header error
             line = fileReader.readLine()
             headers = HeaderUtils().read(line)
 
@@ -46,13 +48,11 @@ class CsvReader<T>() {
                     val fields = LineUtils<String>().read(line, columns)
 
                     val stringValue = gson.toJson(fields).toString()
-                    // FIX ME: Cannot use 'T' as reified type parameter. Use a class instead.
                     var dataItem = gson.fromJson(stringValue, T::class.java)
                     values.add(dataItem)
                 }
                 line = fileReader.readLine()
             }
-
         } catch (e: Exception) {
             println("Reading CSV Error!")
             e.printStackTrace()

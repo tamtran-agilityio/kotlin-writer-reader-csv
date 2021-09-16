@@ -2,18 +2,16 @@ package com.agilityio.csv
 
 import com.agilityio.product.Product
 import com.agilityio.utils.FieldHelpers
-import com.agilityio.utils.FormatObject
+import com.agilityio.utils.FileUtils
 import com.agilityio.utils.HeaderUtils
 import com.agilityio.utils.LineUtils
-import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import java.io.FileWriter
 import java.io.IOException
 
 /**
  * Implement csv write file
  */
-class CsvWrite<V>(private val headers: List<String>)  {
-
+class CsvWriter<V>(private val headers: List<String>)  {
 
     /**
      * Implement build header of csv file
@@ -51,7 +49,7 @@ class CsvWrite<V>(private val headers: List<String>)  {
      * Implement create csv file with file name
      */
     fun write(filePath: String, values: List<V>) {
-        val file = CsvFile().create(filePath)
+        val file = FileUtils().create(filePath)
         var fileWriter: FileWriter? = null
         try {
             fileWriter = FileWriter(file)
@@ -110,5 +108,5 @@ fun main() {
     )
 
 
-    CsvWrite<Product>(headers).write("products.csv", products)
+    CsvWriter<Product>(headers).write("products.csv", products)
 }

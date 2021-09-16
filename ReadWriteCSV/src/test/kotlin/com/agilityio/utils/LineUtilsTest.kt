@@ -1,4 +1,4 @@
-package com.agilityio.csv
+package com.agilityio.utils
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 
-internal class CsvReaderTest {
+internal class LineUtilsTest {
 
     @BeforeEach
     fun setUp() {
@@ -17,18 +17,10 @@ internal class CsvReaderTest {
     }
 
     @Test
-    fun getHeaders() {
+    fun read() {
     }
 
     @Test
-    fun setHeaders() {
-    }
-
-    @Test
-    fun getColumns() {
-    }
-
-    @Test
-    fun setColumns() {
+    fun write() {
     }
 }

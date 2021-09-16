@@ -17,6 +17,6 @@ internal class CsvWriterTest {
     }
 
     @Test
-    fun createCsvFile() {
+    fun write() {
     }
 }
