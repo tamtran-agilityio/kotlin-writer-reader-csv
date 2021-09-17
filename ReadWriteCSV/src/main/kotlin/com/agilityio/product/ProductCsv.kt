@@ -13,6 +13,7 @@ class ProductCsvReader(filePath: String) {
 
     // Initializer blocks prefixed
     init {
+        CsvReader.ignoreReadHeader()
         products = csvRead.read(filePath)
     }
 

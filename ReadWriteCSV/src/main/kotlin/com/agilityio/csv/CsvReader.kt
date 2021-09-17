@@ -13,8 +13,8 @@ import java.io.IOException
  * Implement read csv file
  */
 class CsvReader {
-    lateinit var headers: List<String>
     lateinit var columns: List<CsvField>
+    var headers: List<String> = listOf()
 
     /**
      * Handle read field name and type of field in data model
@@ -33,10 +33,10 @@ class CsvReader {
             fileReader = BufferedReader(FileReader(filePath))
 
             // Read CSV header
-            // Config reader boolean
-            // Read header error
             line = fileReader.readLine()
-            headers = HeaderUtils().read(line)
+            if (!ignoreHeader) {
+                headers = HeaderUtils().read(line)
+            }
 
             // Read the file line by line starting from the second line
             line = fileReader.readLine()
@@ -62,6 +62,14 @@ class CsvReader {
             }
         }
         return values
+    }
+
+    companion object {
+        var ignoreHeader: Boolean = false
+        @JvmStatic
+        fun ignoreReadHeader() {
+            this.ignoreHeader = true
+        }
     }
 }
 

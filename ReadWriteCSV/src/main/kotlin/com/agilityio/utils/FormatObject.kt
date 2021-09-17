@@ -1,5 +1,8 @@
 package com.agilityio.utils
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+
 /**
  * Implement format object
  */
@@ -10,13 +13,9 @@ class FormatObject<T> : Format<T> {
      * @return string values from object
      */
     override fun toString(value: T): String {
-        return value.toString()
-            .replace("null", " ")
-            .substringAfter('(')
-            .substringBeforeLast(')')
-            .split(", ")
-            .map { with(it.split("=")) { this[0] to this[1]} }
-            .joinToString { it.second }
-
+        val mapper = jacksonObjectMapper()
+        val serialized = mapper.writeValueAsString(value)
+        val mapLine: Map<String, Any> = mapper.readValue(serialized)
+        return mapLine.values.joinToString()
     }
 }

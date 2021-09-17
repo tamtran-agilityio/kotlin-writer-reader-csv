@@ -11,7 +11,8 @@ import java.io.IOException
 /**
  * Implement csv write file
  */
-class CsvWriter<V>(private val headers: List<String>)  {
+class CsvWriter<V>(private val headers: List<String>?)  {
+
 
     /**
      * Implement build header of csv file
@@ -39,20 +40,30 @@ class CsvWriter<V>(private val headers: List<String>)  {
     private fun buildTable(values: List<V>): StringBuilder {
         val stringBuffer = StringBuilder()
 
-        stringBuffer.append(buildHeader(headers))
-        values.stream().forEach { stringBuffer.append(buildLine(it)) }
+        // If headers null not build header
+        if (headers?.isNotEmpty() == true) {
+            stringBuffer.append(buildHeader(headers))
+        }
+
+        values.stream().forEach { stringBuffer.append(buildLine(it).toString()) }
 
         return stringBuffer
     }
 
     /**
      * Implement create csv file with file name
+     * @param filePath path name of file
+     * @param values list data object
      */
     fun write(filePath: String, values: List<V>) {
+
+        if (values.isEmpty()) throw IOException("Data object not exists")
+
         val file = FileUtils().create(filePath)
         var fileWriter: FileWriter? = null
         try {
             fileWriter = FileWriter(file)
+
             val contents: String = buildTable(values).toString()
             fileWriter.append(contents)
         } catch (e: Exception) {
