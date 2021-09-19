@@ -65,4 +65,30 @@ internal class CsvWriterTest {
             assertThrows(IOException::class.java) { csvWriter.write(filePath, products) }
         assertEquals("Data object not exists", exception.message)
     }
+
+    @Test
+    // Test write csv success not include header
+    fun writeCsvSuccessIgnoreHeaderWithMultiplesLine() {
+        products = Mock().products(10, 1, 10)
+
+        CsvWriter<Product>(null).write(filePath, products)
+        val file = File(filePath)
+        val count = BufferedReader(FileReader(file)).lines().count()
+
+        assertTrue(file.exists())
+        assertEquals(10, count)
+    }
+
+    @Test
+    // Test write csv success not include header
+    fun writeCsvSuccessWithMultiplesLine() {
+        products = Mock().products(10, 1, 10)
+
+        CsvWriter<Product>(headers).write(filePath, products)
+        val file = File(filePath)
+        val count = BufferedReader(FileReader(file)).lines().count()
+
+        assertTrue(file.exists())
+        assertEquals(11, count)
+    }
 }
