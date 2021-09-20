@@ -13,14 +13,14 @@ class Mock {
             products.add(
                 Product(
                     it,
-                    faker.number().randomDouble(1, 1, number),
-                    faker.book().title(),
+                    faker.number().randomDouble(2, 10, 100),
+                    faker.book().author(),
                     faker.address().countryCode(),
                     faker.address().citySuffix(),
-                    faker.book().title(),
+                    faker.book().author(),
                     faker.animal().name(),
-                    faker.number().randomDouble(1, 1, number),
-                    faker.number().randomDouble(1, 1, number),
+                    faker.number().randomDouble(2, 1, 100),
+                    faker.number().randomDouble(2, 1, 100),
                     faker.address().firstName(),
                     faker.number().randomDigit(),
                     faker.address().city(),
@@ -33,12 +33,12 @@ class Mock {
                     faker.address().secondaryAddress(),
                     faker.bool().bool(),
                     faker.address().streetAddressNumber(),
-                    faker.number().randomDouble(1, 1, number),
-                    faker.number().randomDouble(1, 1, number),
+                    faker.number().randomDouble(2, 1, 100),
+                    faker.number().randomDouble(2, 1, 100),
                     faker.address().stateAbbr(),
                     faker.business().creditCardType(),
                     faker.business().creditCardNumber(),
-                    faker.number().randomDouble(1, 1, number)
+                    faker.number().randomDouble(2, 1, 100)
                 )
             )
         }

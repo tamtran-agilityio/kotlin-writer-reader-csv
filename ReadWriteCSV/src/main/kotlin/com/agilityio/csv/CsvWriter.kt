@@ -11,7 +11,7 @@ import java.io.IOException
 /**
  * Implement csv write file
  */
-class CsvWriter<V>(private val headers: List<String>?)  {
+class CsvWriter<V>(private val headers: List<String>?) {
 
 
     /**
@@ -19,8 +19,13 @@ class CsvWriter<V>(private val headers: List<String>?)  {
      * @param header list string of fields
      * @return string builder of headers
      */
-    private fun buildHeader(header: List<String>): StringBuilder {
-        return HeaderUtils().write(header)
+    private fun buildHeader(header: List<String>?): StringBuilder {
+        val delimitersNewLine = "\n"
+        return if (header == null) {
+            StringBuilder().append(delimitersNewLine)
+        } else {
+            HeaderUtils().write(header)
+        }
     }
 
     /**
@@ -40,11 +45,9 @@ class CsvWriter<V>(private val headers: List<String>?)  {
     private fun buildTable(values: List<V>): StringBuilder {
         val stringBuffer = StringBuilder()
 
-        // If headers null not build header
-        if (headers?.isNotEmpty() == true) {
-            stringBuffer.append(buildHeader(headers))
-        }
-
+        // If header null not build header
+        stringBuffer.append(buildHeader(headers).toString())
+       // Build content of file
         values.stream().forEach { stringBuffer.append(buildLine(it).toString()) }
 
         return stringBuffer
