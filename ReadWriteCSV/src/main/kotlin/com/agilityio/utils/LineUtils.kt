@@ -2,6 +2,7 @@ package com.agilityio.utils
 
 import com.agilityio.csv.CsvField
 import com.agilityio.product.Helpers
+import java.util.stream.Stream
 
 /**
  * Implement helper read write line in Csv file
@@ -34,6 +35,31 @@ class LineUtils<T> {
             }
         }
         return fieldMap
+    }
+
+    /**
+     * Implement read line of Csv file
+     * @param lines stream string when read in Csv file
+     * @param columns list field need read data
+     * @return list hashMap key value by type of field
+     */
+    fun readLines(lines: Stream<String>, columns: List<CsvField>): MutableList<HashMap<String, Any>> {
+        val lineErrors: MutableList<String> = mutableListOf()
+        val lineConvertSuccess: MutableList<HashMap<String, Any>> = mutableListOf()
+
+        lines.forEach { line ->
+            run {
+                try {
+                    val fields: HashMap<String, Any> = read(line, columns)
+                    lineConvertSuccess.add(fields)
+
+                } catch (e: Exception) {
+                    lineErrors.add(line)
+                }
+            }
+        }
+
+        return lineConvertSuccess
     }
 
     /**

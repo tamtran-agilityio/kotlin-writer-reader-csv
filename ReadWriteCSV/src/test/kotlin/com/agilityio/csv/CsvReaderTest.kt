@@ -10,17 +10,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-
 internal class CsvReaderTest {
 
     private val headers: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
-    private lateinit var products: MutableList<Product>
+    private lateinit var products: List<Product>
     private val filePath: String = "test.csv"
     private var csvRead: CsvReader = CsvReader()
 
     @BeforeEach
     fun setUp() {
-        products = Mock().products(10, 1, 10)
+        products = Mock().products(1, 1, 10)
     }
 
     @AfterEach
@@ -30,59 +29,64 @@ internal class CsvReaderTest {
     }
 
     @Test
+    // Test read success with single line not header
     fun readSuccessWithSingleLineNotHeader() {
         CsvWriter<Product>(null).write(filePath, products)
+        val resProducts: List<Product>? = csvRead.read(filePath)
 
-        val resProducts: MutableList<Product> = csvRead.read(filePath)
         assertEquals(products, resProducts)
-//        assertTrue(csvRead.headers.size())
+        assertNull(csvRead.headers)
     }
 
     @Test
+    // Test read success with single line include header
     fun readSuccessWithSingleLineIncludeHeader() {
         CsvWriter<Product>(headers).write(filePath, products)
+        val resProducts: List<Product>? = csvRead.read(filePath)
 
-        val resProducts: MutableList<Product> = csvRead.read(filePath)
         assertEquals(products, resProducts)
         assertEquals(headers, csvRead.headers)
     }
 
     @Test
+    // Test read success with multiple line not header
     fun readSuccessWithMultipleLineNotHeader() {
         products = Mock().products(10, 1, 100)
-
         CsvWriter<Product>(null).write(filePath, products)
+        val resProducts: List<Product>? = csvRead.read(filePath)
 
-        val resProducts: MutableList<Product> = csvRead.read(filePath)
         assertEquals(products, resProducts)
-//        assertTrue(csvRead.headers.size())
+        assertNull(csvRead.headers)
     }
 
     @Test
+    // Test read success with multiple line include header
     fun readSuccessWithMultipleLineIncludeHeader() {
         products = Mock().products(10, 1, 100)
-
         CsvWriter<Product>(headers).write(filePath, products)
+        val resProducts: List<Product>? = csvRead.read(filePath)
 
-        val resProducts: MutableList<Product> = csvRead.read(filePath)
+        // Except list products same with list read list products
         assertEquals(products, resProducts)
+
         assertEquals(headers, csvRead.headers)
     }
+
 
     @Test
     fun readErrorWithMultipleLineIncludeHeader() {
-        products = Mock().products(10, 1, 100)
-
+        val products = Mock().products(10, 1, 100)
         CsvWriter<Product>(headers).write(filePath, products)
         FileHelpers().updateFile(filePath, 2, 1, "Test")
-
-        try {
+        FileHelpers().updateFile(filePath, 1, 8, "Test")
+        val exception = kotlin.runCatching {
             csvRead.read<Product>(filePath)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            assertEquals(NumberFormatException::class.java, e)
+        }
+
+        // Except read success with 8 product
+        exception.onSuccess {
+            assertNotSame(products, it)
+            assertEquals(8, it?.size)
         }
     }
-
-
 }

@@ -7,7 +7,7 @@ import java.io.FileWriter
 import java.io.IOException
 
 class FileHelpers {
-    fun write(filePath: String, contents: String) {
+    private fun write(filePath: String, contents: String) {
         val file = FileUtils().create(filePath)
         var fileWriter: FileWriter? = null
         try {
@@ -27,7 +27,7 @@ class FileHelpers {
         }
     }
 
-    fun read(filePath: String): List<String> {
+    private fun read(filePath: String): List<String> {
         var fileReader: BufferedReader? = null
         var lines: List<String> = listOf()
 

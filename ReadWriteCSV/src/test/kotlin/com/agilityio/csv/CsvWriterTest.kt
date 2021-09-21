@@ -15,7 +15,7 @@ import java.io.IOException
 internal class CsvWriterTest {
 
     private val headers: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
-    private lateinit var products: MutableList<Product>
+    private lateinit var products: List<Product>
     private val filePath: String = "test.csv"
 
     @BeforeEach
@@ -39,7 +39,7 @@ internal class CsvWriterTest {
         val count = BufferedReader(FileReader(file)).lines().count()
 
         assertTrue(file.exists())
-        assertEquals(1, count)
+        assertEquals(2, count)
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class CsvWriterTest {
 
         CsvWriter<Product>(headers).write(filePath, products)
         val file = File(filePath)
-        val count = BufferedReader(FileReader(file)).lines().count()
+        val count = BufferedReader(FileReader(filePath)).lines().count()
 
         assertTrue(file.exists())
         assertEquals(2, count)
@@ -73,10 +73,10 @@ internal class CsvWriterTest {
 
         CsvWriter<Product>(null).write(filePath, products)
         val file = File(filePath)
-        val count = BufferedReader(FileReader(file)).lines().count()
+        val count = BufferedReader(FileReader(filePath)).lines().count()
 
         assertTrue(file.exists())
-        assertEquals(10, count)
+        assertEquals(11, count)
     }
 
     @Test

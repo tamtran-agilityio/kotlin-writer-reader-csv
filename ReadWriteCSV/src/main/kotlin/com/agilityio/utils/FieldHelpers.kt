@@ -43,7 +43,7 @@ class FieldHelpers {
             String::class -> value as T
             Double::class -> value?.toDouble() as T
             Boolean::class -> value?.toBoolean() as T
-            Long::class-> value?.toLong() as T
+            Long::class -> value?.toLong() as T
             // add other types here if you need
             else -> throw IllegalStateException("Unknown Generic Type")
         }
@@ -53,8 +53,8 @@ class FieldHelpers {
      * Handle get field name and type of field in data model
      */
     inline fun <reified T> readerFieldForType(): List<CsvField> {
-         return T::class.java.declaredFields.map { it ->
+        return T::class.java.declaredFields.map { it ->
             CsvField(it.name, it.type.kotlin as KClass<out Any>)
         }
     }
- }
+}
