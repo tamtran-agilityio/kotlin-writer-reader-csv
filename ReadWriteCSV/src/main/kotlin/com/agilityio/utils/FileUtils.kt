@@ -22,6 +22,12 @@ class FileUtils {
      * @return file after create
      */
     fun create(filePath: String): File {
+        val file = File(filePath)
+        // If not file exists
+        if (!file.exists()) {
+            File(filePath).createNewFile()
+        }
+        // Override permission in file
         setFullPermission(filePath)
         return File(filePath)
     }

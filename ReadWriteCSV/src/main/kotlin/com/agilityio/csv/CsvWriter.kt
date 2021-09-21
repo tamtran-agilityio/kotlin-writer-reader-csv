@@ -47,7 +47,7 @@ class CsvWriter<V>(private val headers: List<String>?) {
 
         // If header null not build header
         stringBuffer.append(buildHeader(headers).toString())
-       // Build content of file
+        // Build content of file
         values.stream().forEach { stringBuffer.append(buildLine(it).toString()) }
 
         return stringBuffer

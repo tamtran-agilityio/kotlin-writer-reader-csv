@@ -3,6 +3,7 @@ package com.agilityio.csv
 import com.agilityio.helpers.Mock
 import com.agilityio.product.Product
 import com.agilityio.utils.FieldHelpers
+import com.agilityio.utils.FileUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -11,6 +12,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
+import java.nio.file.attribute.PosixFilePermission
 
 internal class CsvWriterTest {
 
@@ -90,5 +92,20 @@ internal class CsvWriterTest {
 
         assertTrue(file.exists())
         assertEquals(11, count)
+    }
+
+    @Test
+    // Test when change permission in file
+    fun writeSuccessWithPermission() {
+        val products = Mock().products(10, 1, 100)
+
+        // Create file and remove permission execute in file
+        FileUtils().create(filePath)
+        FileUtils().removePermission(filePath, PosixFilePermission.GROUP_EXECUTE)
+        FileUtils().removePermission(filePath, PosixFilePermission.OWNER_EXECUTE)
+        FileUtils().removePermission(filePath, PosixFilePermission.OTHERS_EXECUTE)
+
+        // List products read same list when create
+        CsvWriter<Product>(headers).write(filePath, products)
     }
 }

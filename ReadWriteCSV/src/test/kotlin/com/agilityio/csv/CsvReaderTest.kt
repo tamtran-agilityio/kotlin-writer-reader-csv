@@ -4,11 +4,13 @@ import com.agilityio.helpers.FileHelpers
 import com.agilityio.helpers.Mock
 import com.agilityio.product.Product
 import com.agilityio.utils.FieldHelpers
+import com.agilityio.utils.FileUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.nio.file.attribute.PosixFilePermission
 
 internal class CsvReaderTest {
 
@@ -72,7 +74,6 @@ internal class CsvReaderTest {
         assertEquals(headers, csvRead.headers)
     }
 
-
     @Test
     fun readErrorWithMultipleLineIncludeHeader() {
         val products = Mock().products(10, 1, 100)
@@ -88,5 +89,20 @@ internal class CsvReaderTest {
             assertNotSame(products, it)
             assertEquals(8, it?.size)
         }
+    }
+
+    @Test
+    // Test read when change permission in file
+    fun readSuccessWithPermission() {
+        val products = Mock().products(10, 1, 100)
+        CsvWriter<Product>(headers).write(filePath, products)
+
+        // Remove permission execute in file
+        FileUtils().removePermission(filePath, PosixFilePermission.GROUP_EXECUTE)
+        FileUtils().removePermission(filePath, PosixFilePermission.OWNER_EXECUTE)
+        FileUtils().removePermission(filePath, PosixFilePermission.OTHERS_EXECUTE)
+
+        // List products read same list when create
+        assertEquals(products, csvRead.read<Product>(filePath))
     }
 }
