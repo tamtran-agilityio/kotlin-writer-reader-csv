@@ -59,7 +59,7 @@ class LineUtils<T> {
         }
 
         // Export field convert error
-        CsvWriter<String>(null).write("log-${System.currentTimeMillis()}.csv", lineErrors)
+        if (lineErrors.isNotEmpty()) CsvWriter<String>(null).write("log-${System.currentTimeMillis()}.csv", lineErrors)
         return lineConvertSuccess
     }
 
