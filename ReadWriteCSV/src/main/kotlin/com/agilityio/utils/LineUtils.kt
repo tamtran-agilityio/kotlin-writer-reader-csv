@@ -1,6 +1,7 @@
 package com.agilityio.utils
 
 import com.agilityio.csv.CsvField
+import com.agilityio.csv.CsvWriter
 import com.agilityio.product.Helpers
 import java.util.stream.Stream
 
@@ -8,15 +9,13 @@ import java.util.stream.Stream
  * Implement helper read write line in Csv file
  */
 class LineUtils<T> {
-    private val delimitersNewLine: String = "\n"
-
     /**
      * Implement read line of Csv file
      * @param line String text when read in Csv file
      * @param columns list field need read data
      * @return hashMap key value by type of field
      */
-    fun read(line: String, columns: List<CsvField>): HashMap<String, Any> {
+    private fun read(line: String, columns: List<CsvField>): HashMap<String, Any> {
         val fieldMap = HashMap<String, Any>()
         val fields = line.split(", ")
         columns.forEachIndexed { index, csvField ->
@@ -59,6 +58,8 @@ class LineUtils<T> {
             }
         }
 
+        // Export field convert error
+        CsvWriter<String>(null).write("log-${System.currentTimeMillis()}.csv", lineErrors)
         return lineConvertSuccess
     }
 
@@ -68,9 +69,16 @@ class LineUtils<T> {
      * @return String builder of line
      */
     fun write(data: T): StringBuilder {
-        val formatObject = FormatObject<T>()
-        val valueString = formatObject.toString(data)
+        val delimitersNewLine = "\n"
 
-        return StringBuilder().append(valueString).append(delimitersNewLine)
+        return when(data) {
+            is String -> {
+                StringBuilder().append(data).append(delimitersNewLine)
+            }
+            else -> {
+                val valueString = FormatObject<T>().toString(data)
+                StringBuilder().append(valueString).append(delimitersNewLine)
+            }
+        }
     }
 }

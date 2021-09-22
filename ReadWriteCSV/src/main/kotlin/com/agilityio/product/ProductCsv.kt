@@ -2,8 +2,6 @@ package com.agilityio.product
 
 import com.agilityio.csv.CsvReader
 import com.agilityio.utils.FieldHelpers
-import com.agilityio.utils.FileUtils
-import java.nio.file.attribute.PosixFilePermission
 
 typealias Helpers = FieldHelpers
 /**
