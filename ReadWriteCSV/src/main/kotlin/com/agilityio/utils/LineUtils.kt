@@ -51,7 +51,6 @@ class LineUtils<T> {
                 try {
                     val fields: HashMap<String, Any> = read(line, columns)
                     lineConvertSuccess.add(fields)
-
                 } catch (e: Exception) {
                     lineErrors.add(line)
                 }

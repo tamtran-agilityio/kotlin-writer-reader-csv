@@ -8,11 +8,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
-import java.io.IOException
+import java.io.*
 import java.nio.file.attribute.PosixFilePermission
+
 
 internal class CsvWriterTest {
 
@@ -107,5 +105,15 @@ internal class CsvWriterTest {
 
         // List products read same list when create
         CsvWriter<Product>(headers).write(filePath, products)
+    }
+
+    @Test
+    // Test when write in big file
+    fun writeErrorWithBigFile() {
+        val products = Mock().products(2000000, 1, 2100000)
+
+        // List products read same list when create
+        val throwable = assertThrows(OutOfMemoryError::class.java) { CsvWriter<Product>(headers).write(filePath, products) }
+        assertEquals(FileNotFoundException::class.java, throwable.javaClass)
     }
 }
