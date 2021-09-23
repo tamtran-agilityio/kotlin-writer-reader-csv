@@ -6,10 +6,7 @@ import com.agilityio.utils.LineUtils
 /**
  * Implement build content of Csv file
  */
-class CsvWriterContents<V>(
-    private val header: List<String>?,
-    private val lines: List<V>
-) {
+class CsvWriterContents {
     data class Builder<V>(
         var header: List<String>? = listOf(),
         var lines: List<V> = listOf()
