@@ -52,7 +52,7 @@ class LineUtils<T> {
                     val fields: HashMap<String, Any> = read(line, columns)
                     lineConvertSuccess.add(fields)
                 } catch (e: Exception) {
-                    lineErrors.add(line)
+                    lineErrors.add(line + ", ${e.message}")
                 }
             }
         }
