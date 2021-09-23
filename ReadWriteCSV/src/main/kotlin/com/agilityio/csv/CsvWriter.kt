@@ -7,13 +7,13 @@ import java.io.IOException
 /**
  * Implement csv write file
  */
-class CsvWriter<V>(private val headers: List<String>?) {
+class CsvWriter<V> {
     /**
      * Implement create csv file with file name
      * @param filePath path name of file
      * @param values list data object
      */
-    fun write(filePath: String, values: List<V>) {
+    fun write(filePath: String, values: List<V>, headers: List<String>?) {
         if (values.isEmpty()) throw IOException("Data object not exists")
 
         val file = FileUtils().create(filePath)

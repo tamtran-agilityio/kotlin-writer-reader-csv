@@ -18,7 +18,7 @@ class ProductWriter(
         fun products(products: List<Product>) = apply { this.products = products }
         fun build(filePath: String) = run {
             ProductWriter(header, products)
-            CsvWriter<Product>(header).write(filePath, products)
+            CsvWriter<Product>().write(filePath, products, header)
         }
     }
 }

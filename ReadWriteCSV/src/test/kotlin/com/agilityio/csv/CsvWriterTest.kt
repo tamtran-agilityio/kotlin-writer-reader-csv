@@ -34,7 +34,7 @@ internal class CsvWriterTest {
     fun writeCsvSuccessIgnoreHeaderWithOneLine() {
         products = Mock().products(1, 1, 10)
 
-        CsvWriter<Product>(null).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, null)
         val file = File(filePath)
         val count = BufferedReader(FileReader(file)).lines().count()
 
@@ -47,7 +47,7 @@ internal class CsvWriterTest {
     fun writeCsvSuccessWithOneLine() {
         products = Mock().products(1, 1, 10)
 
-        CsvWriter<Product>(headers).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, headers)
         val file = File(filePath)
         val count = BufferedReader(FileReader(filePath)).lines().count()
 
@@ -59,10 +59,10 @@ internal class CsvWriterTest {
     // Test write csv success include header
     fun writeCsvErrorWithOneLine() {
         products = mutableListOf()
-        CsvWriter<Product>(null)
-        val csvWriter =CsvWriter<Product>(null)
+        CsvWriter<Product>()
+        val csvWriter =CsvWriter<Product>()
         val exception: Throwable =
-            assertThrows(IOException::class.java) { csvWriter.write(filePath, products) }
+            assertThrows(IOException::class.java) { csvWriter.write(filePath, products, null) }
         assertEquals("Data object not exists", exception.message)
     }
 
@@ -71,7 +71,7 @@ internal class CsvWriterTest {
     fun writeCsvSuccessIgnoreHeaderWithMultiplesLine() {
         products = Mock().products(10, 1, 10)
 
-        CsvWriter<Product>(null).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, null)
         val file = File(filePath)
         val count = BufferedReader(FileReader(filePath)).lines().count()
 
@@ -84,7 +84,7 @@ internal class CsvWriterTest {
     fun writeCsvSuccessWithMultiplesLine() {
         products = Mock().products(10, 1, 10)
 
-        CsvWriter<Product>(headers).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, headers)
         val file = File(filePath)
         val count = BufferedReader(FileReader(file)).lines().count()
 
@@ -104,16 +104,16 @@ internal class CsvWriterTest {
         FileUtils().removePermission(filePath, PosixFilePermission.OTHERS_EXECUTE)
 
         // List products read same list when create
-        CsvWriter<Product>(headers).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, headers)
     }
 
     @Test
     // Test when write in big file
-//    fun writeErrorWithBigFile() {
+    fun writeErrorWithBigFile() {
 //        val products = Mock().products(2000000, 1, 2100000)
-//
-//        // List products read same list when create
-//        val throwable = assertThrows(OutOfMemoryError::class.java) { CsvWriter<Product>(headers).write(filePath, products) }
+
+        // List products read same list when create
+//        val throwable = assertThrows(OutOfMemoryError::class.java) { CsvWriter<Product>().write(filePath, products, headers) }
 //        assertEquals(FileNotFoundException::class.java, throwable.javaClass)
-//    }
+    }
 }

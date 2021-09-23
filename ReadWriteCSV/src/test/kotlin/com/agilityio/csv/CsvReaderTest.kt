@@ -34,7 +34,7 @@ internal class CsvReaderTest {
     @Test
     // Test read success with single line not header
     fun readSuccessWithSingleLineNotHeader() {
-        CsvWriter<Product>(null).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, null)
         val resProducts: List<Product>? = csvRead.read(filePath)
 
         assertEquals(products, resProducts)
@@ -44,7 +44,7 @@ internal class CsvReaderTest {
     @Test
     // Test read success with single line include header
     fun readSuccessWithSingleLineIncludeHeader() {
-        CsvWriter<Product>(headers).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, headers)
         val resProducts: List<Product>? = csvRead.read(filePath)
 
         assertEquals(products, resProducts)
@@ -55,7 +55,7 @@ internal class CsvReaderTest {
     // Test read success with multiple line not header
     fun readSuccessWithMultipleLineNotHeader() {
         products = Mock().products(10, 1, 100)
-        CsvWriter<Product>(null).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, null)
         val resProducts: List<Product>? = csvRead.read(filePath)
 
         assertEquals(products, resProducts)
@@ -66,7 +66,7 @@ internal class CsvReaderTest {
     // Test read success with multiple line include header
     fun readSuccessWithMultipleLineIncludeHeader() {
         products = Mock().products(10, 1, 100)
-        CsvWriter<Product>(headers).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, headers)
         val resProducts: List<Product>? = csvRead.read(filePath)
 
         // Except list products same with list read list products
@@ -78,7 +78,7 @@ internal class CsvReaderTest {
     @Test
     fun readErrorWithMultipleLineIncludeHeader() {
         val products = Mock().products(10, 1, 100)
-        CsvWriter<Product>(headers).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, headers)
         FileHelpers().updateFile(filePath, 2, 1, "Test")
         FileHelpers().updateFile(filePath, 1, 8, "Test")
         val exception = kotlin.runCatching {
@@ -96,7 +96,7 @@ internal class CsvReaderTest {
     // Test read when change permission in file
     fun readSuccessWithPermission() {
         val products = Mock().products(10, 1, 100)
-        CsvWriter<Product>(headers).write(filePath, products)
+        CsvWriter<Product>().write(filePath, products, headers)
 
         // Remove permission execute in file
         FileUtils().removePermission(filePath, PosixFilePermission.GROUP_EXECUTE)
