@@ -46,7 +46,8 @@ class CsvReader {
             // Read the file line by line starting from the second line
             val lines: Stream<String> = fileReader.lines().skip(0)
             // Read all line and convert same type of field
-            val listItem: MutableList<HashMap<String, Any>> = LineUtils<String>().readLines(lines, columns)
+            val listItem: MutableList<HashMap<String, Any>> = LineUtils<String>()
+                .readLines(lines, columns)
             // Convert map to list hash map to string
             val serialized = objectMapper.writeValueAsString(listItem)
             val jsonNode: JsonNode = objectMapper.readTree(serialized)
