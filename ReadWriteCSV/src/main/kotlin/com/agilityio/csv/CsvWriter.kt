@@ -21,7 +21,7 @@ class CsvWriter<V>(private val headers: List<String>?) {
         try {
             fileWriter = FileWriter(file)
 
-            val contents: String = CsvWriterContents.Builder<V>()
+            val contents: String = CsvContents.Builder<V>()
                 .header(headers)
                 .lines(values)
                 .build()
