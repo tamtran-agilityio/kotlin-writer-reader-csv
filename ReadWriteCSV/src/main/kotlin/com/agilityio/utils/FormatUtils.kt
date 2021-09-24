@@ -8,7 +8,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
  */
 class FormatUtils<T> : Format<T> {
     /**
-     * Implement object to string
+     * Implement convert object to string
      * @param value: object need to convert
      * @return string values from object
      */

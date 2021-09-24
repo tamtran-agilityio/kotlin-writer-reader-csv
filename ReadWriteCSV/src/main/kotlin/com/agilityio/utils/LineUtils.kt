@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory
  * Implement helper read write line in Csv file
  */
 class LineUtils<T> {
-    val logger: Logger = LoggerFactory.getLogger(LineUtils::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(LineUtils::class.java)
+
     /**
      * Implement read line of Csv file convert line to data object with type of each columns
      * @param line String text when read in Csv file
@@ -38,10 +39,9 @@ class LineUtils<T> {
                     else -> throw IllegalStateException("Unknown generic type")
                 }
             } catch (e: NumberFormatException) {
-                throw NumberFormatException("${csvField.name} ${e.toString()}")
-            }
-            catch (e: IllegalStateException) {
-                throw IllegalStateException("${csvField.name} ${e.toString()}")
+                throw NumberFormatException("${csvField.name} $e")
+            } catch (e: IllegalStateException) {
+                throw IllegalStateException("${csvField.name} $e")
             }
         }
         return fieldMap
@@ -53,7 +53,11 @@ class LineUtils<T> {
      * @param columns list field need read data
      * @return list hashMap key value by type of field
      */
-    fun readLines(lines: MutableList<String>, columns: List<CsvField>, filePath: String): MutableList<HashMap<String, Any>> {
+    fun readLines(
+        lines: MutableList<String>,
+        columns: List<CsvField>,
+        filePath: String
+    ): MutableList<HashMap<String, Any>> {
         val lineErrors: MutableList<String> = mutableListOf()
         val lineConvertSuccess: MutableList<HashMap<String, Any>> = mutableListOf()
 

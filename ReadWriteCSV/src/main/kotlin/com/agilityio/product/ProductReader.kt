@@ -4,6 +4,7 @@ import com.agilityio.csv.CsvReader
 import com.agilityio.utils.FieldUtils
 
 typealias Helpers = FieldUtils
+
 /**
  * Implement read product from Csv file
  */

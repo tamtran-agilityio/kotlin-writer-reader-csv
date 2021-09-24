@@ -14,7 +14,8 @@ import java.nio.file.attribute.PosixFilePermission
 
 internal class CsvWriterTest {
 
-    private val headers: List<String> = FieldUtils().getAllModelFieldsName(Product::class.java)
+    private val headers: List<String> = FieldUtils()
+        .getAllModelFieldsName(Product::class.java)
     private lateinit var products: List<Product>
     private val filePath: String = "test.csv"
 
@@ -60,9 +61,11 @@ internal class CsvWriterTest {
     fun writeCsvErrorWithOneLine() {
         products = mutableListOf()
         CsvWriter<Product>()
-        val csvWriter =CsvWriter<Product>()
+        val csvWriter = CsvWriter<Product>()
         val exception: Throwable =
-            assertThrows(IOException::class.java) { csvWriter.write(filePath, products, null) }
+            assertThrows(IOException::class.java) {
+                csvWriter.write(filePath, products, null)
+            }
         assertEquals("Data object not exists", exception.message)
     }
 
@@ -110,12 +113,14 @@ internal class CsvWriterTest {
     @Test
     // Test when write in big file
     fun writeErrorWithBigFile() {
-//        val products = Mock().products(2000000, 1, 2100000)
-//
-//        // TO DO: slice list object to multiple list object and write each list to file
-//        // List products read same list when create
-//        val throwable =
-//            assertThrows(OutOfMemoryError::class.java) { CsvWriter<Product>().write(filePath, products, headers) }
-//        assertEquals(FileNotFoundException::class.java, throwable.javaClass)
+        val products = Mock().products(2000000, 1, 2100000)
+
+        // TO DO: slice list object to multiple list object and write each list to file
+        // List products read same list when create
+        val throwable =
+            assertThrows(OutOfMemoryError::class.java) {
+                CsvWriter<Product>().write(filePath, products, headers)
+            }
+        assertEquals(FileNotFoundException::class.java, throwable.javaClass)
     }
 }

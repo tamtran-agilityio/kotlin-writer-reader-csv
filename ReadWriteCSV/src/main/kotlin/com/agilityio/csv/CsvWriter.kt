@@ -1,8 +1,8 @@
 package com.agilityio.csv
 
 import com.agilityio.utils.FileUtils
-import org.slf4j.LoggerFactory
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.FileWriter
 import java.io.IOException
 
@@ -11,6 +11,7 @@ import java.io.IOException
  */
 class CsvWriter<V> {
     private val logger: Logger = LoggerFactory.getLogger(CsvWriter::class.java)
+
     /**
      * Implement create csv file with file name
      * @param filePath path name of file
