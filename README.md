@@ -39,6 +39,12 @@
   * Given a CSV file with a format of product data item, read them to a list of products
   * Support read/write headers
 
+## Prerequisites
+ 
+  * Kotlin version 1.3.7
+  * Java version 11
+  * Maven version 3.8.1
+
 ## Install and test
 
   * mvn install

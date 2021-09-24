@@ -8,7 +8,7 @@ import com.agilityio.utils.LineUtils
  */
 class CsvContent {
     data class Builder<V>(
-        var header: List<String>? = listOf(),
+        var header: List<String>? = null,
         var lines: List<V> = listOf()
     ) {
         fun header(header: List<String>?) = apply { this.header = header }

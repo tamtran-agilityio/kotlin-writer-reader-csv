@@ -3,12 +3,14 @@ package com.agilityio.utils
 import com.agilityio.csv.CsvField
 import com.agilityio.csv.CsvWriter
 import com.agilityio.product.Helpers
-import java.util.stream.Stream
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Implement helper read write line in Csv file
  */
 class LineUtils<T> {
+    val logger: Logger = LoggerFactory.getLogger(LineUtils::class.java)
     /**
      * Implement read line of Csv file convert line to data object with type of each columns
      * @param line String text when read in Csv file
@@ -21,18 +23,25 @@ class LineUtils<T> {
         val fieldMap = HashMap<String, Any>()
         val fields = line.split(", ")
         columns.forEachIndexed { index, csvField ->
-            when (csvField.type) {
-                Long::class ->
-                    fieldMap[csvField.name] = Helpers().convertStringTo<Long>(fields[index])
-                Double::class ->
-                    fieldMap[csvField.name] = Helpers().convertStringTo<Double>(fields[index])
-                String::class ->
-                    fieldMap[csvField.name] = Helpers().convertStringTo<String>(fields[index])
-                Int::class ->
-                    fieldMap[csvField.name] = Helpers().convertStringTo<Int>(fields[index])
-                Boolean::class ->
-                    fieldMap[csvField.name] = Helpers().convertStringTo<Boolean>(fields[index])
-                else -> throw IllegalStateException("Unknown Generic Type")
+            try {
+                when (csvField.type) {
+                    Long::class ->
+                        fieldMap[csvField.name] = Helpers().convertStringTo<Long>(fields[index])
+                    Double::class ->
+                        fieldMap[csvField.name] = Helpers().convertStringTo<Double>(fields[index])
+                    String::class ->
+                        fieldMap[csvField.name] = Helpers().convertStringTo<String>(fields[index])
+                    Int::class ->
+                        fieldMap[csvField.name] = Helpers().convertStringTo<Int>(fields[index])
+                    Boolean::class ->
+                        fieldMap[csvField.name] = Helpers().convertStringTo<Boolean>(fields[index])
+                    else -> throw IllegalStateException("Unknown generic type")
+                }
+            } catch (e: NumberFormatException) {
+                throw NumberFormatException("${csvField.name} ${e.toString()}")
+            }
+            catch (e: IllegalStateException) {
+                throw IllegalStateException("${csvField.name} ${e.toString()}")
             }
         }
         return fieldMap
@@ -44,27 +53,27 @@ class LineUtils<T> {
      * @param columns list field need read data
      * @return list hashMap key value by type of field
      */
-    fun readLines(lines: MutableList<String>, columns: List<CsvField>): MutableList<HashMap<String, Any>> {
+    fun readLines(lines: MutableList<String>, columns: List<CsvField>, filePath: String): MutableList<HashMap<String, Any>> {
         val lineErrors: MutableList<String> = mutableListOf()
         val lineConvertSuccess: MutableList<HashMap<String, Any>> = mutableListOf()
 
         // TO DO: line error include line number and column error
         // File name same file input
-        lines.filterIndexed { index, line ->
+        lines.forEach { line ->
             run {
                 try {
                     val fields: HashMap<String, Any> = read(line, columns)
                     lineConvertSuccess.add(fields)
                 } catch (e: Exception) {
-                    e.printStackTrace()
-                    lineErrors.add(line + ", line $index ${e.message}")
+                    logger.error(e.message)
+                    lineErrors.add(line + ", line ${e.message}")
                 }
             }
         }
 
         // Export field convert error
         if (lineErrors.isNotEmpty()) CsvWriter<String>().write(
-            "filePath-error-${System.currentTimeMillis()}.csv",
+            "${filePath}-error-${System.currentTimeMillis()}.csv",
             lineErrors,
             null
         )
@@ -73,19 +82,19 @@ class LineUtils<T> {
 
     /**
      * Implement builder string from data object convert data object to string
-     *
+     * We can string or data object to string builder
      * @param data object need convert to string
-     * @return String builder of line
+     * @return String builder of data item
      */
     fun write(data: T): StringBuilder {
         val delimitersNewLine = "\n"
 
         return when (data) {
-            // Write string to line
+            // Build string to string builder
             is String -> {
                 StringBuilder().append(data).append(delimitersNewLine)
             }
-            // Write object to line
+            // Build object to string builder
             else -> {
                 val valueString = FormatUtils<T>().toString(data)
                 StringBuilder().append(valueString).append(delimitersNewLine)
