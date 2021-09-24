@@ -6,10 +6,7 @@ import com.agilityio.utils.FieldHelpers
 /**
  * Implement write list products
  */
-class ProductWriter(
-    private val header: List<String>,
-    private val products: List<Product>
-) {
+class ProductWriter {
     data class Builder(
         var header: List<String> = listOf(),
         var products: List<Product> = listOf()
@@ -17,8 +14,7 @@ class ProductWriter(
         fun header(header: List<String>) = apply { this.header = header }
         fun products(products: List<Product>) = apply { this.products = products }
         fun build(filePath: String) = run {
-            ProductWriter(header, products)
-            CsvWriter<Product>().write(filePath, products, header)
+            CsvWriter<Product>().write(filePath, this@Builder.products, this@Builder.header)
         }
     }
 }
@@ -90,5 +86,4 @@ fun main() {
         .header(header)
         .products(products)
         .build("products.csv")
-
 }
