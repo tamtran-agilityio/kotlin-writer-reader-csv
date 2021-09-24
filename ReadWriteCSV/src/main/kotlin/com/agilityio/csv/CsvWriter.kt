@@ -1,6 +1,8 @@
 package com.agilityio.csv
 
 import com.agilityio.utils.FileUtils
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 import java.io.FileWriter
 import java.io.IOException
 
@@ -8,6 +10,7 @@ import java.io.IOException
  * Implement csv write file
  */
 class CsvWriter<V> {
+    val logger: Logger = LoggerFactory.getLogger(CsvWriter::class.java)
     /**
      * Implement create csv file with file name
      * @param filePath path name of file
@@ -17,9 +20,8 @@ class CsvWriter<V> {
         if (values.isEmpty()) throw IOException("Data object not exists")
 
         val file = FileUtils().create(filePath)
-        var fileWriter: FileWriter? = null
         try {
-            fileWriter = FileWriter(file)
+            val fileWriter = FileWriter(file)
 
             val contents: String = CsvContent.Builder<V>()
                 .header(headers)
@@ -27,18 +29,9 @@ class CsvWriter<V> {
                 .build()
                 .toString()
 
-            fileWriter.append(contents)
+            fileWriter.use { it.write(contents) }
         } catch (e: Exception) {
-            println("Writing CSV error!")
-            e.printStackTrace()
-        } finally {
-            try {
-                fileWriter!!.flush()
-                fileWriter.close()
-            } catch (e: IOException) {
-                println("Flushing/closing error!")
-                e.printStackTrace()
-            }
+            logger.error("Writing CSV error!")
         }
     }
 }

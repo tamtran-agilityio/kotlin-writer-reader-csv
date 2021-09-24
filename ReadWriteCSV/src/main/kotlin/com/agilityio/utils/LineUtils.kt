@@ -50,13 +50,14 @@ class LineUtils<T> {
 
         // TO DO: line error include line number and column error
         // File name same file input
-        lines.forEach { line ->
+        lines.filterIndexed { index, line ->
             run {
                 try {
                     val fields: HashMap<String, Any> = read(line, columns)
                     lineConvertSuccess.add(fields)
                 } catch (e: Exception) {
-                    lineErrors.add(line + ", ${e.message}")
+                    e.printStackTrace()
+                    lineErrors.add(line + ", line $index ${e.message}")
                 }
             }
         }
@@ -79,9 +80,6 @@ class LineUtils<T> {
     fun write(data: T): StringBuilder {
         val delimitersNewLine = "\n"
 
-        // Write object
-        // Write error
-        // Write error object // TO DO
         return when (data) {
             // Write string to line
             is String -> {
