@@ -34,6 +34,7 @@ class CsvReader {
         try {
             // Override full permission of file
             FileUtils().setFullPermission(filePath)
+
             val streams = Files.newInputStream(Paths.get(filePath))
             val lines: MutableList<String> = mutableListOf()
             // Try with resource read file
@@ -43,16 +44,18 @@ class CsvReader {
                  }
             }
 
-            if (lines.first().isNotEmpty() && !ignoreHeader) {
-                headers = HeaderUtils().read(lines.first())
+            // Get header first line
+            val header = lines.removeAt(0)
+
+            if (header.isNotEmpty() && !ignoreHeader) {
+                headers = HeaderUtils().read(header)
             }
 
-            // Remove first line
-            lines.removeAt(1)
             // Read the file line by line starting from the second line
             // Read all line and convert same type of field
             val listItem: MutableList<HashMap<String, Any>> = LineUtils<String>()
-                .readLines(lines, columns)
+                .readLines(lines, columns, filePath)
+
             // Convert map to list hash map to string
             val serialized = objectMapper.writeValueAsString(listItem)
             return objectMapper.readValue(serialized, object : TypeReference<List<T>>() {})

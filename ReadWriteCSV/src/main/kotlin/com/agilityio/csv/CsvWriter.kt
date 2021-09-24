@@ -10,7 +10,7 @@ import java.io.IOException
  * Implement csv write file
  */
 class CsvWriter<V> {
-    val logger: Logger = LoggerFactory.getLogger(CsvWriter::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(CsvWriter::class.java)
     /**
      * Implement create csv file with file name
      * @param filePath path name of file
