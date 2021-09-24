@@ -13,9 +13,7 @@ class CsvContent {
     ) {
         fun header(header: List<String>?) = apply { this.header = header }
         fun lines(lines: List<V>) = apply { this.lines = lines }
-        fun build() = run {
-            buildTable(lines)
-        }
+        fun build() = run { buildTable(lines) }
 
         /**
          * Implement build header of csv file
