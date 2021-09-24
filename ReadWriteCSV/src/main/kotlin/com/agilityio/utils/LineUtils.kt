@@ -10,11 +10,13 @@ import java.util.stream.Stream
  */
 class LineUtils<T> {
     /**
-     * Implement read line of Csv file
+     * Implement read line of Csv file convert line to data object with type of each columns
      * @param line String text when read in Csv file
      * @param columns list field need read data
      * @return hashMap key value by type of field
+     * TO DO: add code example to here
      */
+
     private fun read(line: String, columns: List<CsvField>): HashMap<String, Any> {
         val fieldMap = HashMap<String, Any>()
         val fields = line.split(", ")
@@ -42,10 +44,12 @@ class LineUtils<T> {
      * @param columns list field need read data
      * @return list hashMap key value by type of field
      */
-    fun readLines(lines: Stream<String>, columns: List<CsvField>): MutableList<HashMap<String, Any>> {
+    fun readLines(lines: MutableList<String>, columns: List<CsvField>): MutableList<HashMap<String, Any>> {
         val lineErrors: MutableList<String> = mutableListOf()
         val lineConvertSuccess: MutableList<HashMap<String, Any>> = mutableListOf()
 
+        // TO DO: line error include line number and column error
+        // File name same file input
         lines.forEach { line ->
             run {
                 try {
@@ -58,24 +62,34 @@ class LineUtils<T> {
         }
 
         // Export field convert error
-        if (lineErrors.isNotEmpty()) CsvWriter<String>().write("log-${System.currentTimeMillis()}.csv", lineErrors, null)
+        if (lineErrors.isNotEmpty()) CsvWriter<String>().write(
+            "filePath-error-${System.currentTimeMillis()}.csv",
+            lineErrors,
+            null
+        )
         return lineConvertSuccess
     }
 
     /**
-     * Implement builder string from data object
+     * Implement builder string from data object convert data object to string
+     *
      * @param data object need convert to string
      * @return String builder of line
      */
     fun write(data: T): StringBuilder {
         val delimitersNewLine = "\n"
 
-        return when(data) {
+        // Write object
+        // Write error
+        // Write error object // TO DO
+        return when (data) {
+            // Write string to line
             is String -> {
                 StringBuilder().append(data).append(delimitersNewLine)
             }
+            // Write object to line
             else -> {
-                val valueString = FormatObject<T>().toString(data)
+                val valueString = FormatUtils<T>().toString(data)
                 StringBuilder().append(valueString).append(delimitersNewLine)
             }
         }

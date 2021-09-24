@@ -3,19 +3,18 @@ package com.agilityio.csv
 import com.agilityio.helpers.FileHelpers
 import com.agilityio.helpers.Mock
 import com.agilityio.product.Product
-import com.agilityio.utils.FieldHelpers
+import com.agilityio.utils.FieldUtils
 import com.agilityio.utils.FileUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.io.FileNotFoundException
 import java.nio.file.attribute.PosixFilePermission
 
 internal class CsvReaderTest {
 
-    private val headers: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
+    private val headers: List<String> = FieldUtils().getAllModelFieldsName(Product::class.java)
     private lateinit var products: List<Product>
     private val filePath: String = "test.csv"
     private var csvRead: CsvReader = CsvReader()

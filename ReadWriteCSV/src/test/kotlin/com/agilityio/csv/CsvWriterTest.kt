@@ -2,7 +2,7 @@ package com.agilityio.csv
 
 import com.agilityio.helpers.Mock
 import com.agilityio.product.Product
-import com.agilityio.utils.FieldHelpers
+import com.agilityio.utils.FieldUtils
 import com.agilityio.utils.FileUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
@@ -14,7 +14,7 @@ import java.nio.file.attribute.PosixFilePermission
 
 internal class CsvWriterTest {
 
-    private val headers: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
+    private val headers: List<String> = FieldUtils().getAllModelFieldsName(Product::class.java)
     private lateinit var products: List<Product>
     private val filePath: String = "test.csv"
 
@@ -110,10 +110,12 @@ internal class CsvWriterTest {
     @Test
     // Test when write in big file
     fun writeErrorWithBigFile() {
-//        val products = Mock().products(2000000, 1, 2100000)
+        val products = Mock().products(2000000, 1, 2100000)
 
+        // TO DO: slice list object to multiple list object and write each list to file
         // List products read same list when create
-//        val throwable = assertThrows(OutOfMemoryError::class.java) { CsvWriter<Product>().write(filePath, products, headers) }
-//        assertEquals(FileNotFoundException::class.java, throwable.javaClass)
+        val throwable =
+            assertThrows(OutOfMemoryError::class.java) { CsvWriter<Product>().write(filePath, products, headers) }
+        assertEquals(FileNotFoundException::class.java, throwable.javaClass)
     }
 }

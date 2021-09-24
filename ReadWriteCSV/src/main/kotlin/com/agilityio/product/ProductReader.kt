@@ -1,9 +1,9 @@
 package com.agilityio.product
 
 import com.agilityio.csv.CsvReader
-import com.agilityio.utils.FieldHelpers
+import com.agilityio.utils.FieldUtils
 
-typealias Helpers = FieldHelpers
+typealias Helpers = FieldUtils
 /**
  * Implement read product from Csv file
  */

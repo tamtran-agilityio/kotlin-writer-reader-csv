@@ -4,7 +4,7 @@ import com.agilityio.csv.CsvField
 import kotlin.reflect.KClass
 import kotlin.streams.toList
 
-class FieldHelpers {
+class FieldUtils {
     /**
      * Handle get all properties name on class
      */

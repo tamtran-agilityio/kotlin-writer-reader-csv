@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 /**
  * Implement format object
  */
-class FormatObject<T> : Format<T> {
+class FormatUtils<T> : Format<T> {
     /**
      * Implement object to string
      * @param value: object need to convert

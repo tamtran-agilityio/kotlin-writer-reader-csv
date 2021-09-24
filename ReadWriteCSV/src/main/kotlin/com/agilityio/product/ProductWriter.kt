@@ -1,7 +1,7 @@
 package com.agilityio.product
 
 import com.agilityio.csv.CsvWriter
-import com.agilityio.utils.FieldHelpers
+import com.agilityio.utils.FieldUtils
 
 /**
  * Implement write list products
@@ -20,7 +20,7 @@ class ProductWriter {
 }
 
 fun main() {
-    val header: List<String> = FieldHelpers().getAllModelFieldsName(Product::class.java)
+    val header: List<String> = FieldUtils().getAllModelFieldsName(Product::class.java)
     val products = listOf(
         Product(
             1,
