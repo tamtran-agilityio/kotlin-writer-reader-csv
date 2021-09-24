@@ -57,16 +57,15 @@ class LineUtils<T> {
         val lineErrors: MutableList<String> = mutableListOf()
         val lineConvertSuccess: MutableList<HashMap<String, Any>> = mutableListOf()
 
-        // TO DO: line error include line number and column error
         // File name same file input
-        lines.forEach { line ->
+        lines.forEachIndexed { index, line ->
             run {
                 try {
                     val fields: HashMap<String, Any> = read(line, columns)
                     lineConvertSuccess.add(fields)
                 } catch (e: Exception) {
                     logger.error(e.message)
-                    lineErrors.add(line + ", line ${e.message}")
+                    lineErrors.add(line + ", line: $index ${e.message}")
                 }
             }
         }
