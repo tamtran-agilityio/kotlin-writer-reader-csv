@@ -8,12 +8,12 @@ import java.nio.file.attribute.PosixFilePermission
 class FileUtils {
     /**
      * Implement get file
-     * @param filePath name of file
+     * @param file name of file
      * @return file
      */
-    fun get(filePath: String): File {
-        setFullPermission(filePath)
-        return File(filePath)
+    fun get(file: File): File {
+        setFullPermission(file)
+        return File(file.path)
     }
 
     /**
@@ -25,19 +25,19 @@ class FileUtils {
         val file = File(filePath)
         // If not file exists
         if (!file.exists()) {
-            File(filePath).createNewFile()
+            File(file.path).createNewFile()
         }
         // Override permission in file
-        setFullPermission(filePath)
-        return File(filePath)
+        setFullPermission(file)
+        return File(file.path)
     }
 
     /**
      * Implement set full permission of file
-     * @param filePath name of file
+     * @param file name of file
      * @return file after create
      */
-    fun setFullPermission(filePath: String) {
+    fun setFullPermission(file: File) {
         val perms: HashSet<PosixFilePermission> = hashSetOf()
         // Add owners permission
         perms.add(PosixFilePermission.OWNER_READ)
@@ -51,7 +51,7 @@ class FileUtils {
         perms.add(PosixFilePermission.OTHERS_READ)
         perms.add(PosixFilePermission.OTHERS_WRITE)
         perms.add(PosixFilePermission.OTHERS_EXECUTE)
-        Files.setPosixFilePermissions(Paths.get(filePath), perms)
+        Files.setPosixFilePermissions(Paths.get(file.path), perms)
     }
 
     /**
@@ -60,23 +60,23 @@ class FileUtils {
      * @param permission enum permission
      * @return file update permission
      */
-    fun removePermission(filePath: String, permission: PosixFilePermission) {
+    fun removePermission(file: File, permission: PosixFilePermission) {
         val perms: HashSet<PosixFilePermission> = hashSetOf()
         // Remove permission
         perms.remove(permission)
-        Files.setPosixFilePermissions(Paths.get(filePath), perms)
+        Files.setPosixFilePermissions(Paths.get(file.path), perms)
     }
 
     /**
      * Implement set permission of file
-     * @param filePath name of file
+     * @param file name of file
      * @param permission enum permission
      * @return file update permission
      */
-    fun setPermission(filePath: String, permission: PosixFilePermission) {
+    fun setPermission(file: File, permission: PosixFilePermission) {
         val perms: HashSet<PosixFilePermission> = hashSetOf()
         // Add permission
         perms.add(permission)
-        Files.setPosixFilePermissions(Paths.get(filePath), perms)
+        Files.setPosixFilePermissions(Paths.get(file.path), perms)
     }
 }

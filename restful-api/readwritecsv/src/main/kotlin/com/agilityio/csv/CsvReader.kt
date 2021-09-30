@@ -7,15 +7,19 @@ import com.agilityio.utils.LineUtils
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.sun.org.slf4j.internal.Logger
-import com.sun.org.slf4j.internal.LoggerFactory
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
+import java.io.File
 import java.io.IOException
 import java.nio.file.Files
-import java.nio.file.Paths
+
+import org.springframework.stereotype.Service;
+
 
 /**
  * Implement read csv file
  */
+@Service
 class CsvReader {
     val logger: Logger = LoggerFactory.getLogger(CsvReader::class.java)
     lateinit var columns: List<CsvField>
@@ -23,19 +27,19 @@ class CsvReader {
 
     /**
      * Handle read field name and type of field in data model
-     * @param filePath string path file
+     * @param file string file
      * @return list T
      */
-    inline fun <reified T> read(filePath: String): List<T>? {
+    inline fun <reified T> read(file: File): List<T>? {
         columns = FieldUtils().readerFieldForType<T>()
 
         val objectMapper = jacksonObjectMapper()
 
         try {
             // Override full permission of file
-            FileUtils().setFullPermission(filePath)
+            FileUtils().setFullPermission(file)
 
-            val streams = Files.newInputStream(Paths.get(filePath))
+            val streams = Files.newInputStream(file.toPath())
             val lines: MutableList<String> = mutableListOf()
             // Try with resource read file
             streams.buffered().reader().use { reader ->
@@ -54,7 +58,7 @@ class CsvReader {
             // Read the file line by line starting from the second line
             // Read all line and convert same type of field
             val listItem: MutableList<HashMap<String, Any>> = LineUtils<String>()
-                .readLines(lines, columns, filePath)
+                .readLines(lines, columns, file.path)
 
             // Convert map to list hash map to string
             val serialized = objectMapper.writeValueAsString(listItem)

@@ -12,11 +12,11 @@ import org.springframework.data.mongodb.core.MongoTemplate
 @ConfigurationProperties("mongo")
 @Configuration
 class MongoConfig {
-    lateinit var url: String
+    lateinit var uri: String
 
     @Bean
     fun mongo(): MongoClient {
-        val connectionString = ConnectionString(url)
+        val connectionString = ConnectionString(uri)
         val mongoClientSettings: MongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(connectionString)
             .build()

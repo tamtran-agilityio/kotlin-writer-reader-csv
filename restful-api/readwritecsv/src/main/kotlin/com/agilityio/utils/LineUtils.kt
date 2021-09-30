@@ -2,9 +2,8 @@ package com.agilityio.utils
 
 import com.agilityio.csv.CsvField
 import com.agilityio.csv.CsvWriter
-import com.fasterxml.jackson.module.kotlin.isKotlinClass
-import com.sun.org.slf4j.internal.Logger
-import com.sun.org.slf4j.internal.LoggerFactory
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 
 /**
  * Implement helper read write line in Csv file
@@ -75,8 +74,9 @@ class LineUtils<T> {
         }
 
         // Export field convert error
-        if (lineErrors.isNotEmpty()) CsvWriter<String>().write(
-            "${filePath}-error-${System.currentTimeMillis()}.csv",
+        val file = FileUtils().create("test.csv")
+        if (lineErrors.isNotEmpty()) CsvWriter<String>().write<String>(
+            file,
             lineErrors,
             null
         )
@@ -100,7 +100,7 @@ class LineUtils<T> {
             }
             // Build object to string builder
             else -> {
-                val valueString = FormatUtils().toString()
+                val valueString = FormatUtils<T>().toString()
                 StringBuilder().append(valueString).append(delimitersNewLine)
             }
         }

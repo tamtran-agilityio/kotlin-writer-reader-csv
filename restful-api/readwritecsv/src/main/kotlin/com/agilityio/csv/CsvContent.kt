@@ -9,9 +9,11 @@ import com.agilityio.utils.LineUtils
 class CsvContent {
     data class Builder<V>(
         var header: List<String>? = null,
+        var fields: List<CsvField> = listOf(),
         var lines: List<V> = listOf()
     ) {
         fun header(header: List<String>?) = apply { this.header = header }
+        fun fields(fields: List<CsvField>) = apply { this.fields = fields }
         fun lines(lines: List<V>) = apply { this.lines = lines }
         fun build() = run { buildTable(lines) }
 
