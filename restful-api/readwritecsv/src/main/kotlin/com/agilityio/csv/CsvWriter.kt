@@ -1,9 +1,9 @@
 package com.agilityio.csv
 
-import com.agilityio.utils.FieldUtils
 import com.agilityio.utils.FileUtils
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
+import org.springframework.stereotype.Service
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -11,16 +11,16 @@ import java.io.IOException
 /**
  * Implement csv write file
  */
+@Service
 class CsvWriter<V> {
-    val logger: Logger = LoggerFactory.getLogger(CsvWriter::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(CsvWriter::class.java)
 
     /**
      * Implement create csv file with file name
-     * @param filePath path name of file
+     * @param file path name of file
      * @param values list data object
      */
-    inline fun <reified T> write(file: File, values: List<V>, headers: List<String>?) {
-        val fields: List<CsvField> = FieldUtils().readerFieldForType<T>()
+    fun write(file: File, values: List<V>, headers: List<String>?) {
         if (values.isEmpty()) throw IOException("Data object not exists")
 
         val fileUpdate = FileUtils().create(file.path)
@@ -29,7 +29,6 @@ class CsvWriter<V> {
 
             val contents: String = CsvContent.Builder<V>()
                 .header(headers)
-                .fields(fields)
                 .lines(values)
                 .build()
                 .toString()

@@ -74,8 +74,8 @@ class LineUtils<T> {
         }
 
         // Export field convert error
-        val file = FileUtils().create("test.csv")
-        if (lineErrors.isNotEmpty()) CsvWriter<String>().write<String>(
+        val file = FileUtils().create(filePath)
+        if (lineErrors.isNotEmpty()) CsvWriter<String>().write(
             file,
             lineErrors,
             null
@@ -100,7 +100,7 @@ class LineUtils<T> {
             }
             // Build object to string builder
             else -> {
-                val valueString = FormatUtils<T>().toString()
+                val valueString = FormatUtils<T>().toString(data)
                 StringBuilder().append(valueString).append(delimitersNewLine)
             }
         }

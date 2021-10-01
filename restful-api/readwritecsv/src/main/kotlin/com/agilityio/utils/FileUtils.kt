@@ -1,6 +1,7 @@
 package com.agilityio.utils
 
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
@@ -32,6 +33,12 @@ class FileUtils {
         return File(file.path)
     }
 
+    fun writeByteArrayToFile(file: File, bytes: ByteArray) {
+        FileOutputStream(file).use {
+            it.write(bytes)
+        }
+    }
+
     /**
      * Implement set full permission of file
      * @param file name of file
@@ -56,7 +63,7 @@ class FileUtils {
 
     /**
      * Implement remove permission of file
-     * @param filePath name of file
+     * @param file name of file
      * @param permission enum permission
      * @return file update permission
      */

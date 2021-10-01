@@ -1,7 +1,5 @@
 package com.agilityio.model
 
-import kotlin.reflect.full.primaryConstructor
-
 /**
  * Data class product
  */
