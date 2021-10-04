@@ -17,13 +17,13 @@ class CsvWriter<V> {
 
     /**
      * Implement create csv file with file name
-     * @param file path name of file
+     * @param filePath path name of file
      * @param values list data object
      */
-    fun write(file: File, values: List<V>, headers: List<String>?) {
+    fun write(filePath: String, values: List<V>, headers: List<String>?) {
         if (values.isEmpty()) throw IOException("Data object not exists")
 
-        val fileUpdate = FileUtils().create(file.path)
+        val fileUpdate = FileUtils().create(filePath)
         try {
             val fileWriter = FileWriter(fileUpdate)
 

@@ -2,6 +2,7 @@ package com.agilityio.utils
 
 import com.agilityio.csv.CsvField
 import java.util.*
+import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.reflect.KClass
 
@@ -10,14 +11,13 @@ class FieldUtils {
     /**
      * Handle get all properties name on class
      */
-    fun getAllModelFieldsName(aClass: Class<*>?): Stream<String> {
+    fun getAllModelFieldsName(aClass: Class<*>?): List<String> {
         val list = mutableListOf<String>()
         val fields = aClass!!.declaredFields
         val t = fields.iterator()
         while (t.hasNext()) {
             list.add(t.next().name)
         }
-        formatFieldName(list)
         return formatFieldName(list)
     }
 
@@ -26,11 +26,12 @@ class FieldUtils {
      * @param list list string
      * @return list string name
      */
-    private fun formatFieldName(list: List<String>): Stream<String> {
+    private fun formatFieldName(list: List<String>): List<String> {
         return list.stream()
             .map { it ->
                 it.replace("(?=[A-Z])".toRegex(), " ")
-                .replaceFirstChar { it -> if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+                .collect(Collectors.toList())
     }
 
     /**

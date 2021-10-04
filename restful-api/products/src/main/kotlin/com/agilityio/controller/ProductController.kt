@@ -5,7 +5,6 @@ import com.agilityio.model.Product
 import com.agilityio.repository.ProductRepository
 import com.agilityio.utils.FileUtils
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -79,8 +78,6 @@ class ProductController(private val productRepository: ProductRepository) {
                 20.0
             )
         )
-        val file = FileUtils().create("products.csv")
-
-        CsvWriter<Product>().write(file, products, null)
+        CsvWriter<Product>().write("products.csv", products, null)
     }
 }

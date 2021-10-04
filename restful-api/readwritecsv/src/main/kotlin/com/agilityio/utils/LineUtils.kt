@@ -74,9 +74,8 @@ class LineUtils<T> {
         }
 
         // Export field convert error
-        val file = FileUtils().create(filePath)
         if (lineErrors.isNotEmpty()) CsvWriter<String>().write(
-            file,
+            filePath,
             lineErrors,
             null
         )

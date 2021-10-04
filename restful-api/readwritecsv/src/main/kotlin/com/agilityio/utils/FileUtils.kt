@@ -63,27 +63,27 @@ class FileUtils {
 
     /**
      * Implement remove permission of file
-     * @param file name of file
+     * @param filePath name of file
      * @param permission enum permission
      * @return file update permission
      */
-    fun removePermission(file: File, permission: PosixFilePermission) {
+    fun removePermission(filePath: String, permission: PosixFilePermission) {
         val perms: HashSet<PosixFilePermission> = hashSetOf()
         // Remove permission
         perms.remove(permission)
-        Files.setPosixFilePermissions(Paths.get(file.path), perms)
+        Files.setPosixFilePermissions(Paths.get(filePath), perms)
     }
 
     /**
      * Implement set permission of file
-     * @param file name of file
+     * @param filePath name of file
      * @param permission enum permission
      * @return file update permission
      */
-    fun setPermission(file: File, permission: PosixFilePermission) {
+    fun setPermission(filePath: String, permission: PosixFilePermission) {
         val perms: HashSet<PosixFilePermission> = hashSetOf()
         // Add permission
         perms.add(permission)
-        Files.setPosixFilePermissions(Paths.get(file.path), perms)
+        Files.setPosixFilePermissions(Paths.get(filePath), perms)
     }
 }
