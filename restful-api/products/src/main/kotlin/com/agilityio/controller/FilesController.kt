@@ -33,6 +33,7 @@ class FilesController(
 
     /**
      * Implement upload file
+     * @param file
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)

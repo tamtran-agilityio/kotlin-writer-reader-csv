@@ -4,7 +4,9 @@ import com.agilityio.helpers.Mock
 import com.agilityio.model.Product
 import com.agilityio.utils.FieldUtils
 import com.agilityio.utils.FileUtils
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.*
 import java.nio.file.attribute.PosixFilePermission
@@ -16,12 +18,12 @@ internal class CsvWriterTest {
     private lateinit var products: List<Product>
     private val filePath: String = "test.csv"
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     fun setUp() {
         products = Mock().products(10, 1, 10)
     }
 
-    @org.junit.jupiter.api.AfterEach
+    @AfterEach
     fun tearDown() {
         val file = File("test.csv")
         file.deleteRecursively()
