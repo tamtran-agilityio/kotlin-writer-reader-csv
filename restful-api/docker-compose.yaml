@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  mongodb:
+    image: 'mongo'
+    ports:
+      - 27017:27017
+    container_name: mongodb
+    networks:
+      - shared-net
+
+networks:
+  shared-net:
+    driver: bridge

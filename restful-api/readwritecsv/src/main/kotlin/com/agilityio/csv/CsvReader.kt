@@ -12,9 +12,7 @@ import org.slf4j.Logger
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
-
-import org.springframework.stereotype.Service;
-
+import org.springframework.stereotype.Service
 
 /**
  * Implement read csv file
