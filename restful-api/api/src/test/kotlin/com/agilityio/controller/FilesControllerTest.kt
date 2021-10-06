@@ -3,29 +3,55 @@ package com.agilityio.controller
 import com.agilityio.csv.CsvWriter
 import com.agilityio.helpers.Mock
 import com.agilityio.model.Product
+import com.agilityio.repository.ProductRepository
 import com.agilityio.utils.FieldUtils
-import com.agilityio.utils.FileUtils
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.mock.web.MockHttpServletResponse
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.io.File
 import java.nio.file.Files
 
-@WebMvcTest
+@AutoConfigureJsonTesters
+@SpringBootTest
+@AutoConfigureMockMvc
+@ExtendWith(MockitoExtension::class)
 internal class FilesControllerTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Autowired
+    lateinit var repository: ProductRepository
+
+    @InjectMocks
+    lateinit var controller: FilesController
+
     private lateinit var products: List<Product>
     private val headers: List<String> = FieldUtils().getAllModelFieldsName(Product::class.java)
     private val filePath: String = "test.csv"
-    private val file: File = FileUtils().create("test.csv")
+
+    @Before
+    fun setUp() {
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(controller)
+            .setMessageConverters(MappingJackson2HttpMessageConverter())
+            .build()
+    }
 
     @Test
     fun uploadSuccessFileCsvWithOneProduct() {
@@ -34,16 +60,11 @@ internal class FilesControllerTest {
 
         val file = File(filePath)
         val bytes: ByteArray = Files.readAllBytes(file.toPath())
+        val csvFile = MockMultipartFile("data", filePath, "text/plain", bytes)
 
         // when
-        val response: MockHttpServletResponse = mockMvc.perform(
-            post("/v1.0/api/files/").contentType(MediaType.MULTIPART_FORM_DATA).content(
-                bytes
-            )
-        ).andReturn().getResponse()
-
-        // then
-        assertThat(response.status).isEqualTo(HttpStatus.OK)
+        mockMvc.perform(multipart("/v1.0/api/files").file(csvFile))
+            .andExpect(status().isOk)
     }
 
     @Test
@@ -53,13 +74,19 @@ internal class FilesControllerTest {
 
         val file = File(filePath)
         val bytes: ByteArray = Files.readAllBytes(file.toPath())
+        val csvFile = MockMultipartFile("data", filePath, "text/plain", bytes)
 
         // when
+        mockMvc.perform(multipart("/v1.0/api/files").file(csvFile))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun downloadProductCsvFile() {
+        // when
         val response: MockHttpServletResponse = mockMvc.perform(
-            post("/v1.0/api/files/").contentType(MediaType.MULTIPART_FORM_DATA).content(
-                bytes
-            )
-        ).andReturn().getResponse()
+            get("/v1.0/api/files/products.csv")
+        ).andReturn().response
 
         // then
         assertThat(response.status).isEqualTo(HttpStatus.OK)

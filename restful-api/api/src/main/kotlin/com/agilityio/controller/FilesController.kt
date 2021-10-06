@@ -4,11 +4,12 @@ import com.agilityio.csv.CsvReader
 import com.agilityio.csv.CsvWriter
 import com.agilityio.model.Product
 import com.agilityio.repository.ProductRepository
-import com.agilityio.utils.HeadersUtils
 import com.agilityio.utils.FieldUtils
 import com.agilityio.utils.FileUtils
+import com.agilityio.utils.HeadersUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -24,12 +25,17 @@ import java.nio.file.Paths
 
 @RestController
 @RequestMapping("/files")
-class FilesController(
-    private val csvRead: CsvReader,
-    private val csvWriter: CsvWriter<Product>,
-    private val productRepository: ProductRepository
-) {
+class FilesController {
     private val logger: Logger = LoggerFactory.getLogger(FilesController::class.java)
+
+    @Autowired
+    lateinit var csvRead: CsvReader
+
+    @Autowired
+    lateinit var csvWriter: CsvWriter<Product>
+
+    @Autowired
+    lateinit var productRepository: ProductRepository
 
     /**
      * Implement upload file
