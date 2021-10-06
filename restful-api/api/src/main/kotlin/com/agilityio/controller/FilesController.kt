@@ -39,12 +39,17 @@ class FilesController(
     @ResponseStatus(HttpStatus.OK)
     fun upload(@RequestParam("file") file: MultipartFile) {
         if (file.isEmpty) throw IOException("")
-        val convFile: File = FileUtils().create(file.originalFilename)
-        FileUtils().writeByteArrayToFile(convFile, file.bytes)
+        val fileName: String? = file.originalFilename
+        if (fileName != null) {
+            if (fileName.isNotEmpty()) {
+                val convFile: File = FileUtils().create(fileName)
+                FileUtils().writeByteArrayToFile(convFile, file.bytes)
 
-        val products: List<Product>? = csvRead.read(convFile)
-        if (products?.isEmpty() != true) {
-            productRepository.saveAll(products as MutableList<Product>)
+                val products: List<Product>? = csvRead.read(convFile)
+                if (products?.isEmpty() != true) {
+                    productRepository.saveAll(products as MutableList<Product>)
+                }
+            }
         }
     }
 
