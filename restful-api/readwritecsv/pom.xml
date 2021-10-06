@@ -54,7 +54,7 @@
 
         <dependency>
             <groupId>com.agilityio</groupId>
-            <artifactId>product</artifactId>
+            <artifactId>core</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

@@ -63,18 +63,13 @@
         </dependency>
         <dependency>
             <groupId>com.agilityio</groupId>
-            <artifactId>product</artifactId>
+            <artifactId>core</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.agilityio</groupId>
             <artifactId>helper</artifactId>
             <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-maven-allopen</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
     </dependencies>
 
@@ -88,13 +83,13 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
 
-                <configuration>
-                    <compilerPlugins>
-                        <!-- Or "spring" for the Spring support -->
-                        <plugin>spring</plugin>
-                    </compilerPlugins>
-
-                </configuration>
+<!--                <configuration>-->
+<!--                    <compilerPlugins>-->
+<!--                        &lt;!&ndash; Or "spring" for the Spring support &ndash;&gt;-->
+<!--                        <plugin>spring</plugin>-->
+<!--                        <plugin>all-open</plugin>-->
+<!--                    </compilerPlugins>-->
+<!--                </configuration>-->
                 <executions>
                     <execution>
                         <id>compile</id>
