@@ -6,6 +6,7 @@ import com.agilityio.model.Product
 import com.agilityio.repository.ProductRepository
 import com.agilityio.utils.FieldUtils
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -16,14 +17,16 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.mock.web.MockServletContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.nio.file.Files
 
@@ -34,6 +37,9 @@ import java.nio.file.Files
 internal class FilesControllerTest {
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var webApplicationContext: WebApplicationContext
 
     @Autowired
     lateinit var repository: ProductRepository
@@ -47,10 +53,24 @@ internal class FilesControllerTest {
 
     @Before
     fun setUp() {
-        mockMvc = MockMvcBuilders
-            .standaloneSetup(controller)
-            .setMessageConverters(MappingJackson2HttpMessageConverter())
+        this.mockMvc = MockMvcBuilders
+            .webAppContextSetup(this.webApplicationContext)
             .build()
+    }
+
+    @Test
+    fun givenWac_whenServletContext_thenItProvidesFilesController() {
+        val servletContext = webApplicationContext.servletContext
+        Assert.assertNotNull(servletContext)
+        Assert.assertTrue(servletContext is MockServletContext)
+        Assert.assertNotNull(webApplicationContext.getBean("filesController"))
+    }
+
+    @Test
+    fun givenHomePageURI_whenMockMVC_thenReturnsIndexJSPViewName() {
+        val response = mockMvc.perform(get("/v1.0/api/products")).andReturn().response
+        println(response)
+        assertThat(response.status).isEqualTo(HttpStatus.OK)
     }
 
     @Test
