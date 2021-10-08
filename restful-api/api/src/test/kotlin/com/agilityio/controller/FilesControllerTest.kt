@@ -8,6 +8,7 @@ import com.agilityio.utils.FieldUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
 import org.junit.Before
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -24,11 +25,12 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.nio.file.Files
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @AutoConfigureJsonTesters
 @SpringBootTest
@@ -42,7 +44,7 @@ internal class FilesControllerTest {
     lateinit var webApplicationContext: WebApplicationContext
 
     @Autowired
-    lateinit var repository: ProductRepository
+    lateinit var productRepository: ProductRepository
 
     @InjectMocks
     lateinit var controller: FilesController
@@ -58,19 +60,17 @@ internal class FilesControllerTest {
             .build()
     }
 
+    @AfterEach
+    fun tearDown() {
+        productRepository.deleteAll()
+    }
+
     @Test
     fun givenWac_whenServletContext_thenItProvidesFilesController() {
         val servletContext = webApplicationContext.servletContext
         Assert.assertNotNull(servletContext)
         Assert.assertTrue(servletContext is MockServletContext)
         Assert.assertNotNull(webApplicationContext.getBean("filesController"))
-    }
-
-    @Test
-    fun givenHomePageURI_whenMockMVC_thenReturnsIndexJSPViewName() {
-        val response = mockMvc.perform(get("/v1.0/api/products")).andReturn().response
-        println(response)
-        assertThat(response.status).isEqualTo(HttpStatus.OK)
     }
 
     @Test
@@ -83,8 +83,14 @@ internal class FilesControllerTest {
         val csvFile = MockMultipartFile("data", filePath, "text/plain", bytes)
 
         // when
-        mockMvc.perform(multipart("/v1.0/api/files").file(csvFile))
+        mockMvc.perform(
+            multipart("/v1.0/api/files")
+                .file("file", csvFile.bytes)
+                .contextPath("/v1.0/api")
+                .characterEncoding("UTF-8"))
             .andExpect(status().isOk)
+
+        assertEquals(products, productRepository.findAll())
     }
 
     @Test
@@ -97,7 +103,11 @@ internal class FilesControllerTest {
         val csvFile = MockMultipartFile("data", filePath, "text/plain", bytes)
 
         // when
-        mockMvc.perform(multipart("/v1.0/api/files").file(csvFile))
+        mockMvc.perform(
+            multipart("/v1.0/api/files")
+                .file("file", csvFile.bytes)
+                .contextPath("/v1.0/api")
+                .characterEncoding("UTF-8"))
             .andExpect(status().isOk)
     }
 
@@ -106,9 +116,12 @@ internal class FilesControllerTest {
         // when
         val response: MockHttpServletResponse = mockMvc.perform(
             get("/v1.0/api/files/products.csv")
+                .contextPath("/v1.0/api")
         ).andReturn().response
 
         // then
-        assertThat(response.status).isEqualTo(HttpStatus.OK)
+        assertThat(response.status).isEqualTo(HttpStatus.OK.value())
+        val content: String = response.contentAsString
+        assertNotNull(content)
     }
 }

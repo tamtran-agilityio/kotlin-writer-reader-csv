@@ -7,6 +7,7 @@ import com.agilityio.repository.ProductRepository
 import com.agilityio.utils.FieldUtils
 import com.agilityio.utils.FileUtils
 import com.agilityio.utils.HeadersUtils
+import com.agilityio.validator.FileValidator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +16,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindingResult
+import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
@@ -22,6 +25,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+
 
 @RestController
 @RequestMapping("/files")
@@ -37,6 +41,9 @@ class FilesController {
     @Autowired
     lateinit var productRepository: ProductRepository
 
+    @Autowired
+    lateinit var fileValidator: FileValidator
+
     /**
      * Implement upload file
      * @param file
@@ -45,6 +52,12 @@ class FilesController {
     @ResponseStatus(HttpStatus.OK)
     fun upload(@RequestParam("file") file: MultipartFile) {
         if (file.isEmpty) throw IOException("")
+        val result: Exception = Exception()
+        fileValidator.validate(file, result as Errors)
+
+        if(result.hasErrors()) {
+            throw IOException(result.objectName)
+        }
         val fileName: String? = file.originalFilename
         if (fileName != null) {
             if (fileName.isNotEmpty()) {

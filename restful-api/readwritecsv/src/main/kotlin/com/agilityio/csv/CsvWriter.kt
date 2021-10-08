@@ -3,15 +3,14 @@ package com.agilityio.csv
 import com.agilityio.utils.FileUtils
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
-import org.springframework.stereotype.Component
-import java.io.File
+import org.springframework.stereotype.Service
 import java.io.FileWriter
 import java.io.IOException
 
 /**
  * Implement csv write file
  */
-@Component
+@Service
 class CsvWriter<V> {
     private val logger: Logger = LoggerFactory.getLogger(CsvWriter::class.java)
 

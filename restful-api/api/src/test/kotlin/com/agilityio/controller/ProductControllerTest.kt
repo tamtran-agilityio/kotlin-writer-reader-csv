@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -21,14 +20,16 @@ import org.springframework.web.context.WebApplicationContext
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension::class)
-@WebMvcTest(ProductController::class)
-internal class ProductControllerTest(@Autowired private val mockMvc: MockMvc) {
+internal class ProductControllerTest {
 
     @Autowired
     lateinit var webApplicationContext: WebApplicationContext
 
     @Autowired
-    lateinit var repository: ProductRepository
+    lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var productRepository: ProductRepository
 
     @Test
     fun givenWac_whenServletContext_thenItProvidesProductController() {
@@ -43,6 +44,7 @@ internal class ProductControllerTest(@Autowired private val mockMvc: MockMvc) {
         // when
         val response: MockHttpServletResponse = this.mockMvc.perform(
             get("/v1.0/api/products")
+                .contextPath("/v1.0/api")
                 .accept(MediaType.APPLICATION_JSON)
         ).andReturn().response
 

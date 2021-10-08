@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -17,7 +17,7 @@ import java.nio.file.Files
 /**
  * Implement read csv file
  */
-@Component
+@Service
 class CsvReader {
     val logger: Logger = LoggerFactory.getLogger(CsvReader::class.java)
     lateinit var columns: List<CsvField>
