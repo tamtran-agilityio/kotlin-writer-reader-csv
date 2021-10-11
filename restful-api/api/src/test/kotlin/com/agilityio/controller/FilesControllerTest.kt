@@ -112,6 +112,24 @@ internal class FilesControllerTest {
     }
 
     @Test
+    fun uploadBigFileError() {
+        products = Mock().products(200000, 1, 2000000)
+        CsvWriter<Product>().write(filePath, products, null)
+
+        val file = File(filePath)
+        val bytes: ByteArray = Files.readAllBytes(file.toPath())
+        val csvFile = MockMultipartFile("data", filePath, "text/plain", bytes)
+
+        // when
+        mockMvc.perform(
+            multipart("/v1.0/api/files")
+                .file("file", csvFile.bytes)
+                .contextPath("/v1.0/api")
+                .characterEncoding("UTF-8"))
+            .andExpect(status().isExpectationFailed)
+    }
+
+    @Test
     fun downloadProductCsvFile() {
         // when
         val response: MockHttpServletResponse = mockMvc.perform(

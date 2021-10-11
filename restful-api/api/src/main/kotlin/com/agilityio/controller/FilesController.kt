@@ -2,6 +2,7 @@ package com.agilityio.controller
 
 import com.agilityio.csv.CsvReader
 import com.agilityio.csv.CsvWriter
+import com.agilityio.helpers.MessageResponse
 import com.agilityio.model.Product
 import com.agilityio.repository.ProductRepository
 import com.agilityio.utils.FieldUtils
@@ -16,8 +17,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BeanPropertyBindingResult
 import org.springframework.validation.BindingResult
-import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
@@ -50,26 +51,28 @@ class FilesController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    fun upload(@RequestParam("file") file: MultipartFile) {
-        if (file.isEmpty) throw IOException("")
-        val result: Exception = Exception()
-        fileValidator.validate(file, result as Errors)
+    fun upload(@RequestParam("file") file: MultipartFile): ResponseEntity<*> {
+        val result: BindingResult = BeanPropertyBindingResult(file, file.name)
+        fileValidator.validate(file, result)
 
-        if(result.hasErrors()) {
+        logger.info("Has errors ==> ${result.hasErrors()}")
+
+        if (result.hasErrors()) {
             throw IOException(result.objectName)
         }
         val fileName: String? = file.originalFilename
         if (fileName != null) {
-            if (fileName.isNotEmpty()) {
-                val convFile: File = FileUtils().create(fileName)
-                FileUtils().writeByteArrayToFile(convFile, file.bytes)
+            val convFile: File = FileUtils().create(fileName)
+            FileUtils().writeByteArrayToFile(convFile, file.bytes)
 
-                val products: List<Product>? = csvRead.read(convFile)
-                if (products?.isEmpty() != true) {
-                    productRepository.saveAll(products as MutableList<Product>)
-                }
+            val products: List<Product>? = csvRead.read(convFile)
+            if (products?.isEmpty() != true) {
+                productRepository.saveAll(products as MutableList<Product>)
             }
         }
+        return ResponseEntity
+            .ok()
+            .body(MessageResponse("Uploaded the file successfully"))
     }
 
     /**
