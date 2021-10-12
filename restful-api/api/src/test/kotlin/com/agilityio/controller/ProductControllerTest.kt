@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockServletContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.web.context.WebApplicationContext
+import kotlin.test.assertNotNull
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,5 +51,6 @@ internal class ProductControllerTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatus.OK.value())
+        assertNotNull(response.contentAsString)
     }
 }

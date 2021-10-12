@@ -8,7 +8,7 @@ import com.agilityio.repository.ProductRepository
 import com.agilityio.utils.FieldUtils
 import com.agilityio.utils.FileUtils
 import com.agilityio.utils.HeadersUtils
-import com.agilityio.validator.FileValidator
+import com.agilityio.validator.FileUploadValidator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,12 +17,9 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.BeanPropertyBindingResult
-import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -43,7 +40,7 @@ class FilesController {
     lateinit var productRepository: ProductRepository
 
     @Autowired
-    lateinit var fileValidator: FileValidator
+    lateinit var fileValidator: FileUploadValidator
 
     /**
      * Implement upload file
@@ -52,17 +49,10 @@ class FilesController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     fun upload(@RequestParam("file") file: MultipartFile): ResponseEntity<*> {
-        val result: BindingResult = BeanPropertyBindingResult(file, file.name)
-        fileValidator.validate(file, result)
-
-        logger.info("Has errors ==> ${result.hasErrors()}")
-
-        if (result.hasErrors()) {
-            throw IOException(result.objectName)
-        }
+        fileValidator.validate(file)
         val fileName: String? = file.originalFilename
         if (fileName != null) {
-            val convFile: File = FileUtils().create(fileName)
+            val convFile: File = FileUtils().create("product_${fileName}")
             FileUtils().writeByteArrayToFile(convFile, file.bytes)
 
             val products: List<Product>? = csvRead.read(convFile)
@@ -83,9 +73,10 @@ class FilesController {
      */
     @GetMapping("{fileName}")
     @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler
-    fun download(@PathVariable fileName: String): ResponseEntity<ByteArrayResource>? {
+    fun download(@PathVariable fileName: String): ResponseEntity<Any> {
         val products = productRepository.findAll()
+        if (products.isEmpty()) throw Exception("Products data empty")
+
         val headers = FieldUtils().getAllModelFieldsName(Product::class.java)
         val file: File = FileUtils().create(fileName)
         csvWriter.write(fileName, products, headers)

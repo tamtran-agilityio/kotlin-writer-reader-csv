@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
 import org.junit.Before
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -17,13 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockServletContext
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
@@ -31,6 +34,7 @@ import java.io.File
 import java.nio.file.Files
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+
 
 @AutoConfigureJsonTesters
 @SpringBootTest
@@ -84,12 +88,12 @@ internal class FilesControllerTest {
 
         // when
         mockMvc.perform(
-            multipart("/v1.0/api/files")
+            multipart("/files")
+                .file(csvFile)
                 .file("file", csvFile.bytes)
                 .contextPath("/v1.0/api")
-                .characterEncoding("UTF-8"))
+                )
             .andExpect(status().isOk)
-
         assertEquals(products, productRepository.findAll())
     }
 
@@ -105,10 +109,40 @@ internal class FilesControllerTest {
         // when
         mockMvc.perform(
             multipart("/v1.0/api/files")
+                .file(csvFile)
+                .file("file", csvFile.bytes)
+                .contextPath("/v1.0/api"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun uploadFileEmptyError() {
+        val csvFile: MockMultipartFile = MockMultipartFile("data", filePath, "text/plain", null)
+        // when
+        mockMvc.perform(
+            multipart("/v1.0/api/files")
+                .file(csvFile)
                 .file("file", csvFile.bytes)
                 .contextPath("/v1.0/api")
                 .characterEncoding("UTF-8"))
-            .andExpect(status().isOk)
+            .andExpect(status().isInternalServerError)
+    }
+
+    @Test
+    fun uploadFileNotMatchExtensionError() {
+        products = Mock().products(10, 1, 100)
+        CsvWriter<Product>().write(filePath, products, null)
+        val file = File(filePath)
+        val bytes: ByteArray = Files.readAllBytes(file.toPath())
+        val csvFile: MockMultipartFile = MockMultipartFile("data", "test.pdf", "text/plain", bytes)
+        // when
+        mockMvc.perform(
+            multipart("/v1.0/api/files")
+                .file(csvFile)
+                .file("file", csvFile.bytes)
+                .contextPath("/v1.0/api")
+                .characterEncoding("UTF-8"))
+            .andExpect(status().isInternalServerError)
     }
 
     @Test
@@ -123,6 +157,7 @@ internal class FilesControllerTest {
         // when
         mockMvc.perform(
             multipart("/v1.0/api/files")
+                .file(csvFile)
                 .file("file", csvFile.bytes)
                 .contextPath("/v1.0/api")
                 .characterEncoding("UTF-8"))
@@ -131,6 +166,9 @@ internal class FilesControllerTest {
 
     @Test
     fun downloadProductCsvFile() {
+        products = Mock().products(10, 1, 20)
+        productRepository.saveAll(products)
+
         // when
         val response: MockHttpServletResponse = mockMvc.perform(
             get("/v1.0/api/files/products.csv")
@@ -141,5 +179,25 @@ internal class FilesControllerTest {
         assertThat(response.status).isEqualTo(HttpStatus.OK.value())
         val content: String = response.contentAsString
         assertNotNull(content)
+    }
+
+    @Test
+    fun downloadProductCsvFileError() {
+        // when
+
+        mockMvc.perform(
+            get("/v1.0/api/files/products.csv")
+                .contextPath("/v1.0/api")
+        ).andExpect(status().isInternalServerError)
+
+        // then
+        val throwable =
+            assertThrows(Exception::class.java) {
+                mockMvc.perform(
+                    get("/v1.0/api/files/products.csv")
+                        .contextPath("/v1.0/api")
+                )
+            }
+        assertEquals(Exception::class.java, throwable.javaClass)
     }
 }
