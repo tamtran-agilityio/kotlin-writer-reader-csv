@@ -34,7 +34,7 @@ import java.io.File
 import java.nio.file.Files
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-
+import kotlin.test.assertTrue
 
 @AutoConfigureJsonTesters
 @SpringBootTest
@@ -120,15 +120,20 @@ internal class FilesControllerTest {
     @Test
     fun uploadFileEmptyError() {
         val csvFile = MockMultipartFile("data", filePath, "text/plain", null)
-        // when
-        mockMvc.perform(
-            multipart("/v1.0/api/files")
-                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
-                .with { it.method = "POST"; it }
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .contextPath("/v1.0/api")
-        ).andExpect(status().is5xxServerError)
 
+        // when
+        val exception: Exception = assertThrows(Exception::class.java) {
+            mockMvc.perform(
+                multipart("/v1.0/api/files")
+                    .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                    .with { it.method = "POST"; it }
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .contextPath("/v1.0/api")
+            ).andReturn()
+        }
+
+        // then
+        assertTrue(exception.message!!.contains("File content not exists"))
     }
 
     @Test
@@ -138,14 +143,20 @@ internal class FilesControllerTest {
         val file = File(filePath)
         val bytes: ByteArray = Files.readAllBytes(file.toPath())
         val csvFile = MockMultipartFile("data", "test.pdf", "text/plain", bytes)
+
         // when
-        mockMvc.perform(
-            multipart("/v1.0/api/files")
-                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
-                .with { it.method = "POST"; it }
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .contextPath("/v1.0/api")
-        ).andExpect(status().is5xxServerError)
+        val exception: Exception = assertThrows(Exception::class.java) {
+            mockMvc.perform(
+                multipart("/v1.0/api/files")
+                    .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                    .with { it.method = "POST"; it }
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .contextPath("/v1.0/api")
+            ).andReturn()
+        }
+
+        // then
+        assertTrue(exception.message!!.contains("File format and extension of don’t match"))
     }
 
     @Test
@@ -188,20 +199,14 @@ internal class FilesControllerTest {
     @Test
     fun downloadProductCsvFileError() {
         // when
-
-        mockMvc.perform(
-            get("/v1.0/api/files/products.csv")
-                .contextPath("/v1.0/api")
-        ).andExpect(status().isInternalServerError)
+        val exception: Exception = assertThrows(Exception::class.java) {
+            mockMvc.perform(
+                get("/v1.0/api/files/products.csv")
+                    .contextPath("/v1.0/api")
+            ).andReturn()
+        }
 
         // then
-        val throwable =
-            assertThrows(Exception::class.java) {
-                mockMvc.perform(
-                    get("/v1.0/api/files/products.csv")
-                        .contextPath("/v1.0/api")
-                )
-            }
-        assertEquals(Exception::class.java, throwable.javaClass)
+        assertTrue(exception.message!!.contains("Products data empty"))
     }
 }
