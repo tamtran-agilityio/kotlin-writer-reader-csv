@@ -89,7 +89,11 @@ internal class FilesControllerTest {
                 .with { it.method = "POST"; it }
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .contextPath("/v1.0/api")
-        ).andExpect(status().isOk)
+        )
+            .andExpect(status().isOk)
+            .andExpect {
+                it.response.contentType?.contains("Uploaded the file successfully")
+            }
         assertEquals(products, productRepository.findAll())
     }
 
@@ -109,7 +113,11 @@ internal class FilesControllerTest {
                 .with { it.method = "POST"; it }
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .contextPath("/v1.0/api")
-        ).andExpect(status().isOk)
+        )
+            .andExpect(status().isOk)
+            .andExpect {
+                it.response.contentType?.contains("Uploaded the file successfully")
+            }
         assertEquals(products, productRepository.findAll())
     }
 
