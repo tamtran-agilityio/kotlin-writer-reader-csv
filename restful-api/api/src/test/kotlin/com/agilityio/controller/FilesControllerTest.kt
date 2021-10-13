@@ -12,7 +12,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
@@ -50,9 +49,6 @@ internal class FilesControllerTest {
     @Autowired
     lateinit var productRepository: ProductRepository
 
-    @InjectMocks
-    lateinit var controller: FilesController
-
     private lateinit var products: List<Product>
     private val headers: List<String> = FieldUtils().getAllModelFieldsName(Product::class.java)
     private val filePath: String = "test.csv"
@@ -80,7 +76,7 @@ internal class FilesControllerTest {
     @Test
     fun uploadSuccessFileCsvWithOneProduct() {
         products = Mock().products(1, 1, 100)
-        CsvWriter<Product>().write(filePath, products, null)
+        CsvWriter<Product>().write(filePath, products, headers)
 
         val file = File(filePath)
         val bytes: ByteArray = Files.readAllBytes(file.toPath())
