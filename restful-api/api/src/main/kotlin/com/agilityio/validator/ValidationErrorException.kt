@@ -1,8 +1,10 @@
 package com.agilityio.validator
 
+import java.io.IOException
+
 class ValidationErrorException(
     private val errors: List<ValidationError>
-) : Exception() {
+) : IOException() {
 
     /***
      * Convenience method for getting a data object from the Exception.
@@ -14,7 +16,7 @@ class ValidationErrorException(
      */
     fun throwErrorsMessage() {
         errors.forEach {
-            throw Exception(it.message)
+            throw IOException(it.message)
         }
     }
 }

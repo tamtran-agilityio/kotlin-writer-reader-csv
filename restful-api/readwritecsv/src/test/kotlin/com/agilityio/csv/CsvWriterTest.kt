@@ -25,7 +25,7 @@ internal class CsvWriterTest {
 
     @AfterEach
     fun tearDown() {
-        val file = File("test.csv")
+        val file = File(filePath)
         file.deleteRecursively()
     }
 

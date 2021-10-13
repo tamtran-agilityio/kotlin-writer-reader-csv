@@ -63,6 +63,7 @@ internal class FilesControllerTest {
     @AfterEach
     fun tearDown() {
         productRepository.deleteAll()
+        File(filePath).deleteRecursively()
     }
 
     @Test
