@@ -2,7 +2,7 @@ package com.agilityio.controller
 
 import com.agilityio.csv.CsvReader
 import com.agilityio.csv.CsvWriter
-import com.agilityio.helpers.MessageResponse
+import com.agilityio.utils.MessageUtils
 import com.agilityio.model.Product
 import com.agilityio.repository.ProductRepository
 import com.agilityio.utils.FieldUtils
@@ -62,7 +62,7 @@ class FilesController {
         }
         return ResponseEntity
             .ok()
-            .body(MessageResponse("Uploaded the file successfully"))
+            .body(MessageUtils("Uploaded the file successfully"))
     }
 
     /**
