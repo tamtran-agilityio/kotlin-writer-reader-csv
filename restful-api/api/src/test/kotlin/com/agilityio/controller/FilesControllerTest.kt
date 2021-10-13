@@ -18,15 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.mock.web.MockPart
 import org.springframework.mock.web.MockServletContext
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
@@ -88,12 +88,12 @@ internal class FilesControllerTest {
 
         // when
         mockMvc.perform(
-            multipart("/files")
-                .file(csvFile)
-                .file("file", csvFile.bytes)
+            multipart("/v1.0/api/files")
+                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                .with { it.method = "POST"; it }
+                .contentType(MediaType.MULTIPART_FORM_DATA)
                 .contextPath("/v1.0/api")
-                )
-            .andExpect(status().isOk)
+        ).andExpect(status().isOk)
         assertEquals(products, productRepository.findAll())
     }
 
@@ -109,23 +109,26 @@ internal class FilesControllerTest {
         // when
         mockMvc.perform(
             multipart("/v1.0/api/files")
-                .file(csvFile)
-                .file("file", csvFile.bytes)
-                .contextPath("/v1.0/api"))
-            .andExpect(status().isOk)
+                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                .with { it.method = "POST"; it }
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .contextPath("/v1.0/api")
+        ).andExpect(status().isOk)
+        assertEquals(products, productRepository.findAll())
     }
 
     @Test
     fun uploadFileEmptyError() {
-        val csvFile: MockMultipartFile = MockMultipartFile("data", filePath, "text/plain", null)
+        val csvFile = MockMultipartFile("data", filePath, "text/plain", null)
         // when
         mockMvc.perform(
             multipart("/v1.0/api/files")
-                .file(csvFile)
-                .file("file", csvFile.bytes)
+                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                .with { it.method = "POST"; it }
+                .contentType(MediaType.MULTIPART_FORM_DATA)
                 .contextPath("/v1.0/api")
-                .characterEncoding("UTF-8"))
-            .andExpect(status().isInternalServerError)
+        ).andExpect(status().is5xxServerError)
+
     }
 
     @Test
@@ -134,15 +137,15 @@ internal class FilesControllerTest {
         CsvWriter<Product>().write(filePath, products, null)
         val file = File(filePath)
         val bytes: ByteArray = Files.readAllBytes(file.toPath())
-        val csvFile: MockMultipartFile = MockMultipartFile("data", "test.pdf", "text/plain", bytes)
+        val csvFile = MockMultipartFile("data", "test.pdf", "text/plain", bytes)
         // when
         mockMvc.perform(
             multipart("/v1.0/api/files")
-                .file(csvFile)
-                .file("file", csvFile.bytes)
+                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                .with { it.method = "POST"; it }
+                .contentType(MediaType.MULTIPART_FORM_DATA)
                 .contextPath("/v1.0/api")
-                .characterEncoding("UTF-8"))
-            .andExpect(status().isInternalServerError)
+        ).andExpect(status().is5xxServerError)
     }
 
     @Test
@@ -157,10 +160,11 @@ internal class FilesControllerTest {
         // when
         mockMvc.perform(
             multipart("/v1.0/api/files")
-                .file(csvFile)
-                .file("file", csvFile.bytes)
+                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                .with { it.method = "POST"; it }
                 .contextPath("/v1.0/api")
-                .characterEncoding("UTF-8"))
+                .characterEncoding("UTF-8")
+        )
             .andExpect(status().isExpectationFailed)
     }
 
