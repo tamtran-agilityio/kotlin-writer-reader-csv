@@ -127,18 +127,17 @@ internal class FilesControllerTest {
         val csvFile = MockMultipartFile("data", filePath, "text/plain", null)
 
         // when
-        val exception: Exception = assertThrows(Exception::class.java) {
-            mockMvc.perform(
-                multipart("/v1.0/api/files")
-                    .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
-                    .with { it.method = "POST"; it }
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .contextPath("/v1.0/api")
-            ).andReturn()
-        }
-
-        // then
-        assertTrue(exception.message!!.contains("File content not exists"))
+        mockMvc.perform(
+            multipart("/v1.0/api/files")
+                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                .with { it.method = "POST"; it }
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .contextPath("/v1.0/api")
+            )
+            .andExpect(status().isBadRequest)
+            .andExpect {
+                it.response.contentType?.contains("File content not exists")
+            }
     }
 
     @Test
@@ -150,18 +149,17 @@ internal class FilesControllerTest {
         val csvFile = MockMultipartFile("data", "test.pdf", "text/plain", bytes)
 
         // when
-        val exception: Exception = assertThrows(Exception::class.java) {
-            mockMvc.perform(
-                multipart("/v1.0/api/files")
-                    .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
-                    .with { it.method = "POST"; it }
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .contextPath("/v1.0/api")
-            ).andReturn()
-        }
-
-        // then
-        assertTrue(exception.message!!.contains("File format and extension of don’t match"))
+        mockMvc.perform(
+            multipart("/v1.0/api/files")
+                .part(MockPart("file", csvFile.originalFilename, csvFile.bytes ))
+                .with { it.method = "POST"; it }
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .contextPath("/v1.0/api")
+            )
+            .andExpect(status().isBadRequest)
+            .andExpect {
+                it.response.contentType?.contains("File format and extension of don’t match")
+            }
     }
 
     @Test
