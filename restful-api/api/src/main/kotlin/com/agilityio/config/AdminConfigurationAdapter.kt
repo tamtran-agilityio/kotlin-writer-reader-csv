@@ -1,5 +1,6 @@
 package com.agilityio.config
 
+import com.agilityio.authentication.RoleName
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -13,8 +14,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 class AdminConfigurationAdapter: WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.antMatcher("/products/**")
-            .authorizeRequests().anyRequest().hasRole("ADMIN")
+        http.antMatcher("/v1.0/api/users")
+            .authorizeRequests().anyRequest().hasRole(RoleName.ADMIN.toString())
             .and().httpBasic().authenticationEntryPoint(authenticationEntryPoint())
     }
 

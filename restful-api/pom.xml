@@ -93,7 +93,7 @@
     <modules>
         <module>readwritecsv</module>
         <module>api</module>
-        <module>core</module>
+        <module>cores</module>
         <module>helper</module>
     </modules>
 </project>

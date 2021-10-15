@@ -1,5 +1,6 @@
 package com.agilityio.config
 
+import com.agilityio.authentication.RoleName
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -15,17 +16,17 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 class UserConfigurationAdapter: WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.antMatcher("/files/**")
-            .authorizeRequests().anyRequest().hasRole("USER")
+        http.antMatcher("/v1.0/api/users")
+            .authorizeRequests().anyRequest().hasRole(RoleName.ADMIN.toString())
             .and()
             .exceptionHandling()
             .defaultAuthenticationEntryPointFor(
                 loginUrlAuthenticationEntryPointWithWarning(),
-                AntPathRequestMatcher("/user/login")
+                AntPathRequestMatcher("/users/login")
             )
             .defaultAuthenticationEntryPointFor(
                 loginUrlAuthenticationEntryPoint(),
-                AntPathRequestMatcher("/user/**")
+                AntPathRequestMatcher("/users/**")
             )
     }
 

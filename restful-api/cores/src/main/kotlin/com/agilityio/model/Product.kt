@@ -1,9 +1,14 @@
 package com.agilityio.model
 
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
+
 /**
  * Data class product
  */
+@Document(collection = "products")
 data class Product(
+    @Id
     val id: Long,
     val price: Double,
     val productName: String,

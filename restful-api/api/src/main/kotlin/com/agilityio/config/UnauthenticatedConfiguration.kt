@@ -10,6 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 class UnauthenticatedConfiguration: WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.antMatcher("/users/**").authorizeRequests().anyRequest().permitAll()
+        http.antMatcher("/v1.0/api/files").authorizeRequests().anyRequest().permitAll()
     }
 }
